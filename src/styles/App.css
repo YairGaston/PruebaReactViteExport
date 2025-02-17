@@ -1,0 +1,128 @@
+/* Estilos previos... */
+h1{
+  text-align: center;
+}
+#formulario{
+  display: flex;
+  flex-direction:row;
+  align-items: center;
+  gap: 5px;
+ 
+}
+table {
+    width: 100%;
+    margin-top: 20px;
+    border-collapse: collapse;
+  }
+  
+  table th, table td {
+    padding: 10px;
+    border: 1px solid #ccc;
+    text-align: left;
+  }
+  
+  table th {
+    background-color: #f4f4f9;
+  }
+  
+  .editar-btn:hover, .eliminar-btn:hover{
+    opacity: 0.9;
+  } 
+  button#logout-btn:hover, button#guardar-btn:hover {
+    background-color:hsla(180, 99%, 38%, 0.589)
+  }
+  .editar-btn, .eliminar-btn, button.logout-btn, button.guardar-btn {
+    padding: 5px 10px;
+    margin-right: 5px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  #guardar-btn, #logout-btn {
+    padding: 5px 10px;
+    margin-right: 5px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .editar-btn {
+    background-color: #28a745;
+    color: white;
+  }
+  
+  .eliminar-btn {
+    background-color: #dc3545;
+    color: white;
+  }
+  .login-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 400px;
+    margin: 10px auto;
+    padding: 20px;
+  }
+  
+  /*#loginForm {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }*/
+  
+  .user-info {
+    display: flex;
+    justify-content: space-between;
+    align-items:end ;
+    margin-bottom: 10px;
+  }
+
+  .usuario-foto{
+display: flex;
+flex-direction: row-reverse;
+align-items: center;
+gap: 10px;
+justify-content: space-between;
+  }
+  Avatar img{
+    width: 300%;
+    height: 300%;
+   
+
+  }
+
+  .google-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 20px;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+}
+  input{
+    padding: 5px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+  }
+  .google-btn img {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .google-btn:hover {
+    background: #f1f1f1;
+  }
+  
+  .logout-btn.guardar-btn{
+    cursor: pointer;
+  }
+  .error-message {
+    color: #dc3545;
+    padding: 1rem;
+    border: 1px solid #f5c6cb;
+    border-radius: 4px;
+    margin: 1rem 0;
+  }
