@@ -6,6 +6,7 @@ import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 
+const mostrarFormulario = document.getElementById("formulario");
 export default function TablaRegistros({ setEditingId }) {
   const { db, auth } = useFirebase();
   const [registros, setRegistros] = useState([]);
@@ -41,6 +42,7 @@ export default function TablaRegistros({ setEditingId }) {
 
   const handleEditar = (id) => {
     setEditingId(id);
+    console.log(registros.filter(registro => registro.id === id));
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -56,25 +58,59 @@ export default function TablaRegistros({ setEditingId }) {
   };
 
   const exportToExcel = () => {
-    const worksheet = XLSX.utils.json_to_sheet(registros);
+    const sortedRegistros = [...registros]
+    .sort((b, a) => a.fechaRegistro.toDate() - b.fechaRegistro.toDate())
+    .map(registro => ({
+      id: registro.id,
+      Nombre: registro.nombre,
+      Email: registro.email,
+      Teléfono: registro.telefono,
+      Dirección: registro.direccion,
+      Edad: registro.edad,
+      "Fecha de registro": registro.fechaRegistro.toDate().toLocaleDateString(),
+      "Hora de registro": registro.fechaRegistro.toDate().toLocaleTimeString('es-AR', { 
+        hour: '2-digit', 
+        minute: '2-digit', 
+        second: '2-digit', 
+        hour12: false 
+      })
+    }));
+    const worksheet = XLSX.utils.json_to_sheet(sortedRegistros);
     const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Registros');
-    XLSX.writeFile(workbook, 'registros.xlsx');
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Registroslala');
+    XLSX.writeFile(workbook, 'registros123.xlsx');
   };
 
+  let QtyRegistros = registros.length;
+  
   const exportToPDF = () => {
-    const doc = new jsPDF();
-    doc.text('Registros almacenados', 20, 10);
-    doc.autoTable({
-      head: [['Nombre', 'Email', 'Teléfono', 'Dirección', 'Edad']],
-      body: registros.map(registro => [
-        registro.nombre,
+    const sortedRegistros = [...registros].sort((b, a) => a.fechaRegistro.toDate() - b.fechaRegistro.toDate());
+  const doc = new jsPDF( { orientation: 'landscape',format: 'a4' });
+  doc.setFontSize(12);
+  doc.text(`Registros almacenados ${QtyRegistros}` , 20, 10 );
+  doc.autoTable({
+    head: [['id', 'Nombre', 'Email', 'Teléfono', 'Dirección', 'Edad', 'Fecha de registro', 'Hora de registro']],
+    body: sortedRegistros.map(registro => [
+      registro.id,
+      registro.nombre,
         registro.email,
         registro.telefono,
         registro.direccion,
-        registro.edad
+        registro.edad,
+        registro.fechaRegistro.toDate().toLocaleDateString(),
+        registro.fechaRegistro.toDate().toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }),  
       ]),
+      styles: { fontSize: 8 },
+      headStyles: { 
+        halign: 'center',  // Centrar horizontalmente
+        valign: 'middle',  // Centrar verticalmente
+        /* fillColor: [200, 200, 200], // Color de fondo del encabezado (opcional)
+        textColor: [0, 0, 0], // Color del texto (opcional) */
+        fontStyle: 'bold', // Estilo de fuente (opcional)
+        fontSize: 9
+      }
     });
+   
     doc.save('registros.pdf');
   };
 
@@ -83,32 +119,36 @@ export default function TablaRegistros({ setEditingId }) {
 
   return (
     <div className="table-container">
-      <h2>Registros almacenados</h2>
-      <button onClick={exportToExcel}>Exportar a Excel</button>
-      <button onClick={exportToPDF}>Exportar a PDF</button>
+      <h2>Registros almacenados {QtyRegistros}</h2>
       <table className="registros-table">
         <thead>
           <tr>
-            <th>Nombre</th>
+           {/* <th>Nombre</th>
             <th>Email</th>
             <th>Teléfono</th>
             <th>Dirección</th>
-            <th>Edad</th>
-            <th>Acciones</th>
+            <th>Edad</th>cd 
+            <th>Acciones</th>*/}
+            <th>10</th>
+            <th>20</th>
+            <th>30</th>
+            <th>40</th>
+            <th>50</th>
+            <th>60</th>
           </tr>
         </thead>
         <tbody>
           {registros.map((registro) => (
             <tr key={registro.id}>
-              <td>{registro.nombre}</td>
-              <td>{registro.email}</td>
-              <td>{registro.telefono}</td>
-              <td>{registro.direccion}</td>
-              <td>{registro.edad}</td>
+              <td><button>{registro.nombre}</button></td>
+              <td><button>{registro.email}</button></td>
+              <td><button>{registro.telefono}</button></td>
+              <td><button>{registro.direccion}</button></td>
+              <td><button>{registro.edad}</button></td>
               <td>
                 <button 
                   className="editar-btn"
-                  onClick={() => handleEditar(registro.id)}
+                  onClick={() => {handleEditar(registro.id), mostrarFormulario.classList.toggle("oculto")}}
                 >
                   Editar
                 </button>
@@ -123,6 +163,9 @@ export default function TablaRegistros({ setEditingId }) {
           ))}
         </tbody>
       </table>
+        <br />
+      <div><button onClick={exportToExcel}id="guardar-btn">Exportar a Excel</button>
+      <button onClick={exportToPDF}id="guardar-btn">Exportar a PDF</button></div>
     </div>
   );
 }

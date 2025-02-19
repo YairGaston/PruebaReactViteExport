@@ -52,9 +52,19 @@ export default function Formulario({ editingId, setEditingId }) {
       console.error(error);
     }
   };
+  const handleEliminar = async (e) => {
+    e.preventDefault();
+    try {
+      setFormData({ nombre: '', email: '', telefono: '', direccion: '', edad: '' });
+      setEditingId(null);
+    } catch (error) {
+      console.error(error);
+    }
 
+    };
+    
   return (
-    <form onSubmit={handleSubmit} id="formulario">
+    <form onSubmit={handleSubmit} onReset={handleEliminar} id="formulario" className="oculto">
       
         <label htmlFor="nombre">Nombre:</label>
         <input
@@ -111,6 +121,8 @@ export default function Formulario({ editingId, setEditingId }) {
         />
       
       <button id="guardar-btn" type="submit">Guardar</button>
+      <button id="guardar-btn" type="reset" >Cancelar</button>
+
     </form>
   );
 }

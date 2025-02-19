@@ -2,26 +2,61 @@
 h1{
   text-align: center;
 }
+.oculto {
+  display: none;
+}
+.visible {
+  display: block;
+}
 #formulario{
+  
   display: flex;
-  flex-direction:row;
+  flex-wrap:wrap;
+  flex-direction:row; ;
   align-items: center;
+  justify-content: center;
   gap: 5px;
  
 }
+.table-container{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
 table {
-    width: 100%;
+  
+  justify-content: center;
+  align-items: center;
+    width:auto;
     margin-top: 20px;
     border-collapse: collapse;
+    border:none;
   }
   
   table th, table td {
     padding: 10px;
-    border: 1px solid #ccc;
+   /*  border: 1px solid #ccc; */
     text-align: left;
   }
+  table td:last-child {
+    text-align: center;
+  }
+  table td button {
+    text-shadow: 0px 1px 1px rgba(0, 0, 0, 0.3);
+    color: white;
+    cursor: pointer;
+    background-color:hsla(180, 97%, 27%, 0.808);
+    border: none;
+    border-radius: 2px;
+    padding: 5px 10px;
+    margin-right: 5px;
+}
   
   table th {
+    text-align: center;
     background-color: #f4f4f9;
   }
   
