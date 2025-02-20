@@ -45,15 +45,19 @@ table {
     text-align: center;
   }
   table td button {
-    text-shadow: 0px 1px 1px rgba(0, 0, 0, 0.3);
-    color: white;
+    width: 100%;
+    /* text-shadow: 0px 1px 1px rgba(0, 0, 0, 0.3); */
+    color:      #36363a;
+    ;
     cursor: pointer;
-    background-color:hsla(180, 97%, 27%, 0.808);
+   /*  background-color:hsla(180, 97%, 27%, 0.808); */
     border: none;
     border-radius: 2px;
     padding: 5px 10px;
     margin-right: 5px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
 }
+
   
   table th {
     text-align: center;
@@ -72,6 +76,8 @@ table {
     border: none;
     border-radius: 4px;
     cursor: pointer;
+    width: auto ;
+
   }
   #guardar-btn, #logout-btn {
     padding: 5px 10px;
@@ -79,16 +85,18 @@ table {
     border: none;
     border-radius: 4px;
     cursor: pointer;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
   }
   
   .editar-btn {
     background-color: #28a745;
     color: white;
+    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.25);
   }
-  
   .eliminar-btn {
     background-color: #dc3545;
     color: white;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
   }
   .login-container {
     display: flex;
@@ -98,13 +106,7 @@ table {
     margin: 10px auto;
     padding: 20px;
   }
-  
-  /*#loginForm {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }*/
-  
+    
   .user-info {
     display: flex;
     justify-content: space-between;
