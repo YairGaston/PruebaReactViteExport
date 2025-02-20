@@ -12,6 +12,7 @@ export default function TablaRegistros({ setEditingId }) {
   const [registros, setRegistros] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [sortOrder, setSortOrder] = useState('asc'); // Estado para manejar el orden
 
   useEffect(() => {
     if (!auth.currentUser) {
@@ -114,37 +115,47 @@ export default function TablaRegistros({ setEditingId }) {
     doc.save('registros.pdf');
   };
 
+  const handleSort = () => {
+    const newSortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
+    setSortOrder(newSortOrder);
+  };
+
+  const sortedRegistros = [...registros].sort((a, b) => {
+    const dateA = a.fechaRegistro.toDate();
+    const dateB = b.fechaRegistro.toDate();
+    return sortOrder === 'asc' ? dateA - dateB : dateB - dateA;
+  });
+
   if (loading) return <div>Cargando registros...</div>;
   if (error) return <div className="error-message">{error}</div>;
 
   return (
     <div className="table-container">
       <h2>Registros almacenados {QtyRegistros}</h2>
+      <button onClick={handleSort} id="guardar-btn">{sortOrder === 'asc' ? 'Ascendente' : 'Descendente'}</button>
       <table className="registros-table">
         <thead>
           <tr>
-           {/* <th>Nombre</th>
+            <th>Nombre</th>
             <th>Email</th>
             <th>Teléfono</th>
             <th>Dirección</th>
-            <th>Edad</th>cd 
-            <th>Acciones</th>*/}
-            <th>10</th>
-            <th>20</th>
-            <th>30</th>
-            <th>40</th>
-            <th>50</th>
-            <th>60</th>
+            <th>Edad</th>
+            <th>FechaRegistro</th>
+            <th>HoraRegistro</th>
+            <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
-          {registros.map((registro) => (
+          {sortedRegistros.map((registro) => (
             <tr key={registro.id}>
               <td><button>{registro.nombre}</button></td>
               <td><button>{registro.email}</button></td>
               <td><button>{registro.telefono}</button></td>
               <td><button>{registro.direccion}</button></td>
               <td><button>{registro.edad}</button></td>
+              <td><button>{registro.fechaRegistro.toDate().toLocaleDateString()}</button></td>
+              <td><button>{registro.fechaRegistro.toDate().toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false })}</button></td>
               <td>
                 <button 
                   className="editar-btn"
@@ -163,9 +174,11 @@ export default function TablaRegistros({ setEditingId }) {
           ))}
         </tbody>
       </table>
-        <br />
-      <div><button onClick={exportToExcel}id="guardar-btn">Exportar a Excel</button>
-      <button onClick={exportToPDF}id="guardar-btn">Exportar a PDF</button></div>
+      <br />
+      <div>
+        <button onClick={exportToExcel} id="guardar-btn">Exportar a Excel</button>
+        <button onClick={exportToPDF} id="guardar-btn">Exportar a PDF</button>
+      </div>
     </div>
   );
 }
