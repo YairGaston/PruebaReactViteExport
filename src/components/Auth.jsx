@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useFirebase } from '../context/FirebaseContext';
 import { signInWithPopup, signOut } from 'firebase/auth';
-import Avatar from '@material-ui/core/Avatar' ;
+import Avatar from '@mui/material/Avatar';
 
 export default function Auth() {
   const { auth, provider } = useFirebase();
