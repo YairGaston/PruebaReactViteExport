@@ -84,6 +84,7 @@ export default function TablaRegistros({ setEditingId }) {
 
   let QtyRegistros = registros.length;
   
+  
   const exportToPDF = () => {
     const sortedRegistros = [...registros].sort((b, a) => a.fechaRegistro.toDate() - b.fechaRegistro.toDate());
   const doc = new jsPDF( { orientation: 'landscape',format: 'a4' });
@@ -123,11 +124,15 @@ export default function TablaRegistros({ setEditingId }) {
   const sortedRegistros = [...registros].sort((a, b) => {
     const dateA = a.fechaRegistro.toDate();
     const dateB = b.fechaRegistro.toDate();
+    
     return sortOrder === 'asc' ? dateA - dateB : dateB - dateA;
   });
 
   if (loading) return <div>Cargando registros...</div>;
   if (error) return <div className="error-message">{error}</div>;
+
+  const today = new Date().toLocaleDateString('es-AR', {day:'2-digit'});
+
 
   return (
     <div className="table-container">
@@ -136,14 +141,38 @@ export default function TablaRegistros({ setEditingId }) {
       <table className="registros-table">
         <thead>
           <tr>
-            <th>Nombre</th>
-            <th>Email</th>
-            <th>Teléfono</th>
-            <th>Dirección</th>
-            <th>Edad</th>
-            <th>FechaRegistro</th>
-            <th>HoraRegistro</th>
-            <th>Acciones</th>
+            <th>{ today-15}</th>
+            <th>{today-14}</th>
+            <th>{today-13}</th>
+            <th>{today-12}</th>
+            <th>{today-11}</th>
+            <th>{today-10}</th>
+            <th>{today-9}</th>
+            <th>{today-8}</th>
+            <th>{today-7}</th>
+            <th>{today-6}</th>
+            <th>{today-5}</th>
+            <th>{today-4}</th>
+            <th>{today-3}</th>
+            <th>{today-2}</th>
+            <th>{today-1}</th>
+            <th>{new Date().toLocaleDateString('es-AR', {day:'2-digit'})}</th>
+            <th>{today-1+2}</th>
+            <th>{today-1+3}</th>
+            <th>{today-1+4}</th>
+            <th>{today-1+5}</th>
+            <th>{today-1+6}</th>
+            <th>{today-1+7}</th>
+            <th>{today-1+8}</th>
+            <th>{today-1+9}</th>
+            <th>{today-1+10}</th>
+            <th>{today-1+11}</th>
+            <th>{today-1+12}</th>
+            <th>{today-1+13}</th>
+            <th>{today-1+14}</th>
+            <th>{today-1+15}</th>            
+            <th>{today-1+16}</th>    
+         
           </tr>
         </thead>
         <tbody>
