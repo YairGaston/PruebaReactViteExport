@@ -5,6 +5,8 @@ import { collection, onSnapshot, deleteDoc, doc } from 'firebase/firestore';
 import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
+import { addDay } from "@formkit/tempo"
+/* import { format } from "@formkit/tempo" */
 
 const mostrarFormulario = document.getElementById("formulario");
 export default function TablaRegistros({ setEditingId }) {
@@ -13,6 +15,7 @@ export default function TablaRegistros({ setEditingId }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [sortOrder, setSortOrder] = useState('asc'); // Estado para manejar el orden
+  const [count, setCount] = useState(0); // Estado para manejar el contador de días que se debe mover el planning
 
   useEffect(() => {
     if (!auth.currentUser) {
@@ -131,48 +134,84 @@ export default function TablaRegistros({ setEditingId }) {
   if (loading) return <div>Cargando registros...</div>;
   if (error) return <div className="error-message">{error}</div>;
 
-  const today = new Date().toLocaleDateString('es-AR', {day:'2-digit'});
-
+  const DiaCentral = new Date();
 
   return (
     <div className="table-container">
       <h2>Registros almacenados {QtyRegistros}</h2>
+      <div className="MovimientoDeTabla">
+      <button onClick={() => setCount((count) => count - 1)}id="guardar-btn">count is <span>{count}</span></button>
       <button onClick={handleSort} id="guardar-btn">{sortOrder === 'asc' ? 'Ascendente' : 'Descendente'}</button>
+      <button onClick={() => setCount((count) => count + 1)}id="guardar-btn">count is <span>{count}</span></button>
+      </div>
       <table className="registros-table">
         <thead>
+          <tr className="NombreMes">
+            <th /* colSpan={count} */>{addDay(DiaCentral,count -15).toLocaleString('es-AR', {month: 'short' })}</th>
+            <th>{addDay(DiaCentral,count -14).toLocaleString('es-AR', {month: 'short' })}</th>
+            <th>{addDay(DiaCentral,count -13).toLocaleString('es-AR', {month: 'short' })}</th>
+            <th>{addDay(DiaCentral,count -12).toLocaleString('es-AR', {month: 'short' })}</th>
+            <th>{addDay(DiaCentral,count -11).toLocaleString('es-AR', {month: 'short' })}</th>
+            <th>{addDay(DiaCentral,count -10).toLocaleString('es-AR', {month: 'short' })}</th>
+            <th>{addDay(DiaCentral,count -9).toLocaleString('es-AR', {month: 'short' })}</th>
+            <th>{addDay(DiaCentral,count -8).toLocaleString('es-AR', {month: 'short' })}</th>
+            <th>{addDay(DiaCentral,count -6).toLocaleString('es-AR', {month: 'short' })}</th>
+            <th>{addDay(DiaCentral,count -5).toLocaleString('es-AR', {month: 'short' })}</th>
+            <th>{addDay(DiaCentral,count -4).toLocaleString('es-AR', {month: 'short' })}</th>
+            <th>{addDay(DiaCentral,count -3).toLocaleString('es-AR', {month: 'short' })}</th>
+            <th>{addDay(DiaCentral,count -2).toLocaleString('es-AR', {month: 'short' })}</th>
+            <th>{addDay(DiaCentral,count -7).toLocaleString('es-AR', {month: 'short' })}</th>
+            <th>{addDay(DiaCentral,count -1).toLocaleString('es-AR', {month: 'short' })}</th>
+            <th>{addDay(DiaCentral,count +0).toLocaleString('es-AR', {month: 'short' })}</th>
+            <th>{addDay(DiaCentral,count +1).toLocaleString('es-AR', {month: 'short' })}</th>
+            <th>{addDay(DiaCentral,count + 2).toLocaleString('es-AR', {month: 'short' })}</th>
+            <th>{addDay(DiaCentral,count + 3).toLocaleString('es-AR', {month: 'short' })}</th>
+            <th>{addDay(DiaCentral,count + 4).toLocaleString('es-AR', {month: 'short' })}</th>
+            <th>{addDay(DiaCentral,count + 5).toLocaleString('es-AR', {month: 'short' })}</th>
+            <th>{addDay(DiaCentral,count + 6).toLocaleString('es-AR', {month: 'short' })}</th>
+            <th>{addDay(DiaCentral,count + 7).toLocaleString('es-AR', {month: 'short' })}</th>
+            <th>{addDay(DiaCentral,count + 8).toLocaleString('es-AR', {month: 'short' })}</th>
+            <th>{addDay(DiaCentral,count + 9).toLocaleString('es-AR', {month: 'short' })}</th>
+            <th>{addDay(DiaCentral,count + 10).toLocaleString('es-AR', {month: 'short' })}</th>
+            <th>{addDay(DiaCentral,count + 11).toLocaleString('es-AR', {month: 'short' })}</th>
+            <th>{addDay(DiaCentral,count + 12).toLocaleString('es-AR', {month: 'short' })}</th>
+            <th>{addDay(DiaCentral,count + 13).toLocaleString('es-AR', {month: 'short' })}</th>
+            <th>{addDay(DiaCentral,count + 14).toLocaleString('es-AR', {month: 'short' })}</th>
+            <th>{addDay(DiaCentral,count + 15).toLocaleString('es-AR', {month: 'short' })}</th>
+
+          </tr>
           <tr>
-            <th>{ today-15}</th>
-            <th>{today-14}</th>
-            <th>{today-13}</th>
-            <th>{today-12}</th>
-            <th>{today-11}</th>
-            <th>{today-10}</th>
-            <th>{today-9}</th>
-            <th>{today-8}</th>
-            <th>{today-7}</th>
-            <th>{today-6}</th>
-            <th>{today-5}</th>
-            <th>{today-4}</th>
-            <th>{today-3}</th>
-            <th>{today-2}</th>
-            <th>{today-1}</th>
-            <th>{new Date().toLocaleDateString('es-AR', {day:'2-digit'})}</th>
-            <th>{today-1+2}</th>
-            <th>{today-1+3}</th>
-            <th>{today-1+4}</th>
-            <th>{today-1+5}</th>
-            <th>{today-1+6}</th>
-            <th>{today-1+7}</th>
-            <th>{today-1+8}</th>
-            <th>{today-1+9}</th>
-            <th>{today-1+10}</th>
-            <th>{today-1+11}</th>
-            <th>{today-1+12}</th>
-            <th>{today-1+13}</th>
-            <th>{today-1+14}</th>
-            <th>{today-1+15}</th>            
-            <th>{today-1+16}</th>    
-         
+            <th>{addDay(DiaCentral,count -15).toLocaleString('es-AR', {day:'2-digit'})}</th>
+            <th>{addDay(DiaCentral,count -14).toLocaleString('es-AR', {day:'2-digit'})}</th>
+            <th>{addDay(DiaCentral,count -13).toLocaleString('es-AR', {day:'2-digit'})}</th>
+            <th>{addDay(DiaCentral,count -12).toLocaleString('es-AR', {day:'2-digit'})}</th>
+            <th>{addDay(DiaCentral,count -11).toLocaleString('es-AR', {day:'2-digit'})}</th>
+            <th>{addDay(DiaCentral,count -10).toLocaleString('es-AR', {day:'2-digit'})}</th>
+            <th>{addDay(DiaCentral,count -9).toLocaleString('es-AR', {day:'2-digit'})}</th>
+            <th>{addDay(DiaCentral,count -8).toLocaleString('es-AR', {day:'2-digit'})}</th>
+            <th>{addDay(DiaCentral,count -7).toLocaleString('es-AR', {day:'2-digit'})}</th>
+            <th>{addDay(DiaCentral,count -6).toLocaleString('es-AR', {day:'2-digit'})}</th>
+            <th>{addDay(DiaCentral,count -5).toLocaleString('es-AR', {day:'2-digit'})}</th>
+            <th>{addDay(DiaCentral,count -4).toLocaleString('es-AR', {day:'2-digit'})}</th>
+            <th>{addDay(DiaCentral,count -3).toLocaleString('es-AR', {day:'2-digit'})}</th>
+            <th>{addDay(DiaCentral,count -2).toLocaleString('es-AR', {day:'2-digit'})}</th>
+            <th>{addDay(DiaCentral,count -1).toLocaleString('es-AR', {day:'2-digit'})}</th>
+            <th>{addDay(DiaCentral,count +0).toLocaleString('es-AR', {day:'2-digit'})}</th>
+            <th>{addDay(DiaCentral,count +1).toLocaleString('es-AR', {day:'2-digit'})}</th>
+            <th>{addDay(DiaCentral,count + 2).toLocaleString('es-AR', {day:'2-digit'})}</th>
+            <th>{addDay(DiaCentral,count + 3).toLocaleString('es-AR', {day:'2-digit'})}</th>
+            <th>{addDay(DiaCentral,count + 4).toLocaleString('es-AR', {day:'2-digit'})}</th>
+            <th>{addDay(DiaCentral,count + 5).toLocaleString('es-AR', {day:'2-digit'})}</th>
+            <th>{addDay(DiaCentral,count + 6).toLocaleString('es-AR', {day:'2-digit'})}</th>
+            <th>{addDay(DiaCentral,count + 7).toLocaleString('es-AR', {day:'2-digit'})}</th>
+            <th>{addDay(DiaCentral,count + 8).toLocaleString('es-AR', {day:'2-digit'})}</th>
+            <th>{addDay(DiaCentral,count + 9).toLocaleString('es-AR', {day:'2-digit'})}</th>
+            <th>{addDay(DiaCentral,count + 10).toLocaleString('es-AR', {day:'2-digit'})}</th>
+            <th>{addDay(DiaCentral,count + 11).toLocaleString('es-AR', {day:'2-digit'})}</th>
+            <th>{addDay(DiaCentral,count + 12).toLocaleString('es-AR', {day:'2-digit'})}</th>
+            <th>{addDay(DiaCentral,count + 13).toLocaleString('es-AR', {day:'2-digit'})}</th>
+            <th>{addDay(DiaCentral,count + 14).toLocaleString('es-AR', {day:'2-digit'})}</th>
+            <th>{addDay(DiaCentral,count + 15).toLocaleString('es-AR', {day:'2-digit'})}</th>
           </tr>
         </thead>
         <tbody>
@@ -204,7 +243,7 @@ export default function TablaRegistros({ setEditingId }) {
         </tbody>
       </table>
       <br />
-      <div>
+      <div className="export-buttons">
         <button onClick={exportToExcel} id="guardar-btn">Exportar a Excel</button>
         <button onClick={exportToPDF} id="guardar-btn">Exportar a PDF</button>
       </div>

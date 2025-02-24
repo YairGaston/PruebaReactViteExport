@@ -18,13 +18,13 @@ h1{
   gap: 5px;
  
 }
-.table-container{
+/* .table-container{
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 5px;
-}
+} */
 
 table {
   
@@ -37,9 +37,10 @@ table {
   }
   
   table th, table td {
-    padding: 10px;
+    padding: 5px;
    /*  border: 1px solid #ccc; */
     text-align: left;
+    color: #36363a;
   }
   table td:last-child {
     text-align: center;
@@ -58,10 +59,10 @@ table {
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
 }
 
-  
   table th {
     text-align: center;
     background-color: #f4f4f9;
+   /*  padding: 5px; */
   }
   
   .editar-btn:hover, .eliminar-btn:hover{
@@ -113,13 +114,29 @@ table {
     align-items:end ;
     margin-bottom: 10px;
   }
-
+  .MovimientoDeTabla,.export-buttons{
+    display: flex;
+    justify-content:space-between ;
+    align-items:center ;
+    margin-left:30px;
+    margin-right:30px;
+  }
+  h2{
+    text-align: center;
+    color: #36363a;
+  }
+  .NombreMes{
+    text-transform: capitalize; /* primera letra en mayuscula */
+    font: 50 ;
+    font-size: small;
+  
+  }
   .usuario-foto{
-display: flex;
-flex-direction: row-reverse;
-align-items: center;
-gap: 10px;
-justify-content: space-between;
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+    gap: 10px;
+    justify-content: space-between;
   }
   Avatar img{
     width: 300%;
