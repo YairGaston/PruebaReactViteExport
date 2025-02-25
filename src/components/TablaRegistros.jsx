@@ -5,7 +5,9 @@ import { collection, onSnapshot, deleteDoc, doc } from 'firebase/firestore';
 import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
-import { addDay } from "@formkit/tempo"
+import { addDay } from "@formkit/tempo";
+import { monthEnd } from "@formkit/tempo";
+import { diffDays } from "@formkit/tempo"
 /* import { format } from "@formkit/tempo" */
 
 const mostrarFormulario = document.getElementById("formulario");
@@ -135,54 +137,31 @@ export default function TablaRegistros({ setEditingId }) {
   if (error) return <div className="error-message">{error}</div>;
 
   const DiaCentral = new Date();
+  const DiaInicioDeTabla = addDay(DiaCentral,count -15);
+  const DiaFinDeTabla = addDay(DiaCentral,count +15);
+  const FinDeMes = monthEnd(DiaInicioDeTabla);
+  let diasNombreMes1 = diffDays( FinDeMes ,DiaInicioDeTabla ) +1;
+  let diasNombreMes2 = diffDays( DiaFinDeTabla ,addDay(FinDeMes,1) ) +1;
+
 
   return (
-    <div className="table-container">
-      <h2>Registros almacenados {QtyRegistros}</h2>
+    <div className="registros-table">
+    <h2>Registros almacenados {QtyRegistros} - {DiaFinDeTabla.toLocaleDateString('es-AR')} - {DiaInicioDeTabla.toLocaleDateString('es-AR') } - {FinDeMes.toLocaleDateString('es-AR')} - {diasNombreMes1} -- {diasNombreMes2} </h2>
       <div className="MovimientoDeTabla">
       <button onClick={() => setCount((count) => count - 1)}id="guardar-btn">count is <span>{count}</span></button>
       <button onClick={handleSort} id="guardar-btn">{sortOrder === 'asc' ? 'Ascendente' : 'Descendente'}</button>
       <button onClick={() => setCount((count) => count + 1)}id="guardar-btn">count is <span>{count}</span></button>
       </div>
-      <table className="registros-table">
+      <table >
         <thead>
           <tr className="NombreMes">
-            <th /* colSpan={count} */>{addDay(DiaCentral,count -15).toLocaleString('es-AR', {month: 'short' })}</th>
-            <th>{addDay(DiaCentral,count -14).toLocaleString('es-AR', {month: 'short' })}</th>
-            <th>{addDay(DiaCentral,count -13).toLocaleString('es-AR', {month: 'short' })}</th>
-            <th>{addDay(DiaCentral,count -12).toLocaleString('es-AR', {month: 'short' })}</th>
-            <th>{addDay(DiaCentral,count -11).toLocaleString('es-AR', {month: 'short' })}</th>
-            <th>{addDay(DiaCentral,count -10).toLocaleString('es-AR', {month: 'short' })}</th>
-            <th>{addDay(DiaCentral,count -9).toLocaleString('es-AR', {month: 'short' })}</th>
-            <th>{addDay(DiaCentral,count -8).toLocaleString('es-AR', {month: 'short' })}</th>
-            <th>{addDay(DiaCentral,count -6).toLocaleString('es-AR', {month: 'short' })}</th>
-            <th>{addDay(DiaCentral,count -5).toLocaleString('es-AR', {month: 'short' })}</th>
-            <th>{addDay(DiaCentral,count -4).toLocaleString('es-AR', {month: 'short' })}</th>
-            <th>{addDay(DiaCentral,count -3).toLocaleString('es-AR', {month: 'short' })}</th>
-            <th>{addDay(DiaCentral,count -2).toLocaleString('es-AR', {month: 'short' })}</th>
-            <th>{addDay(DiaCentral,count -7).toLocaleString('es-AR', {month: 'short' })}</th>
-            <th>{addDay(DiaCentral,count -1).toLocaleString('es-AR', {month: 'short' })}</th>
-            <th>{addDay(DiaCentral,count +0).toLocaleString('es-AR', {month: 'short' })}</th>
-            <th>{addDay(DiaCentral,count +1).toLocaleString('es-AR', {month: 'short' })}</th>
-            <th>{addDay(DiaCentral,count + 2).toLocaleString('es-AR', {month: 'short' })}</th>
-            <th>{addDay(DiaCentral,count + 3).toLocaleString('es-AR', {month: 'short' })}</th>
-            <th>{addDay(DiaCentral,count + 4).toLocaleString('es-AR', {month: 'short' })}</th>
-            <th>{addDay(DiaCentral,count + 5).toLocaleString('es-AR', {month: 'short' })}</th>
-            <th>{addDay(DiaCentral,count + 6).toLocaleString('es-AR', {month: 'short' })}</th>
-            <th>{addDay(DiaCentral,count + 7).toLocaleString('es-AR', {month: 'short' })}</th>
-            <th>{addDay(DiaCentral,count + 8).toLocaleString('es-AR', {month: 'short' })}</th>
-            <th>{addDay(DiaCentral,count + 9).toLocaleString('es-AR', {month: 'short' })}</th>
-            <th>{addDay(DiaCentral,count + 10).toLocaleString('es-AR', {month: 'short' })}</th>
-            <th>{addDay(DiaCentral,count + 11).toLocaleString('es-AR', {month: 'short' })}</th>
-            <th>{addDay(DiaCentral,count + 12).toLocaleString('es-AR', {month: 'short' })}</th>
-            <th>{addDay(DiaCentral,count + 13).toLocaleString('es-AR', {month: 'short' })}</th>
-            <th>{addDay(DiaCentral,count + 14).toLocaleString('es-AR', {month: 'short' })}</th>
-            <th>{addDay(DiaCentral,count + 15).toLocaleString('es-AR', {month: 'short' })}</th>
-
+            <th colSpan={diasNombreMes1}><button id="btn-NombreMes">{addDay(DiaCentral,count -15).toLocaleString('es-AR', {month: 'short' })} </button> </th>
+            <th colSpan={diasNombreMes2}><button id="btn-NombreMes">{addDay(FinDeMes,1).toLocaleString('es-AR', {month: 'short' })}</button></th>
+            <th hidden>{addDay(DiaCentral,count -13).toLocaleString('es-AR', {month: 'short' })}</th>
           </tr>
           <tr>
-            <th>{addDay(DiaCentral,count -15).toLocaleString('es-AR', {day:'2-digit'})}</th>
-            <th>{addDay(DiaCentral,count -14).toLocaleString('es-AR', {day:'2-digit'})}</th>
+            <th><button id="btn-encabezado">{addDay(DiaCentral,count -15).toLocaleString('es-AR', {day:'2-digit'})}</button></th>
+            <th><button id="btn-encabezado">{addDay(DiaCentral,count -14).toLocaleString('es-AR', {day:'2-digit'})}</button></th>
             <th>{addDay(DiaCentral,count -13).toLocaleString('es-AR', {day:'2-digit'})}</th>
             <th>{addDay(DiaCentral,count -12).toLocaleString('es-AR', {day:'2-digit'})}</th>
             <th>{addDay(DiaCentral,count -11).toLocaleString('es-AR', {day:'2-digit'})}</th>
@@ -247,7 +226,8 @@ export default function TablaRegistros({ setEditingId }) {
         <button onClick={exportToExcel} id="guardar-btn">Exportar a Excel</button>
         <button onClick={exportToPDF} id="guardar-btn">Exportar a PDF</button>
       </div>
-    </div>
+      </div>
+    
   );
 }
 
