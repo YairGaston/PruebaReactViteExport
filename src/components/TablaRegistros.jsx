@@ -18,6 +18,7 @@ export default function TablaRegistros({ setEditingId }) {
   const [error, setError] = useState(null);
   const [sortOrder, setSortOrder] = useState('asc'); // Estado para manejar el orden
   const [count, setCount] = useState(0); // Estado para manejar el contador de días que se debe mover el planning
+  const [isVisible, setIsVisible] = useState(false)
 
   useEffect(() => {
     if (!auth.currentUser) {
@@ -138,26 +139,48 @@ export default function TablaRegistros({ setEditingId }) {
 
   const DiaCentral = new Date();
   const DiaInicioDeTabla = addDay(DiaCentral,count -15);
-  const DiaFinDeTabla = addDay(DiaCentral,count +15);
   const FinDeMes = monthEnd(DiaInicioDeTabla);
-  let diasNombreMes1 = diffDays( FinDeMes ,DiaInicioDeTabla ) +1;
-  let diasNombreMes2 = diffDays( DiaFinDeTabla ,addDay(FinDeMes,1) ) +1;
-
+  const FinDeMes2 = monthEnd(addDay(FinDeMes,1));
+  let diasNombreMes1 = diffDays( FinDeMes ,DiaInicioDeTabla ) +1; 
+  
+  if ( addDay(DiaInicioDeTabla,+30) > FinDeMes2 ){
+    var diasNombreMes2 = diffDays( FinDeMes2,FinDeMes);
+  }else{
+    diasNombreMes2 = diffDays(addDay(DiaInicioDeTabla,+31),addDay(FinDeMes,1));
+  }
+    const diasNombreMes3 = 31 - diasNombreMes1 -diasNombreMes2 ;
+  
+    function handleClick() {
+      
+      if (((diasNombreMes1 +count) + (diasNombreMes2+count)) >= 30 && isVisible === true) {
+        setIsVisible(!isVisible);
+        console.log((diasNombreMes1 + diasNombreMes2) , " mayor 30");
+        console.log(isVisible );
+      } else if (((diasNombreMes1 +count) + (diasNombreMes2+count)) <= 30 && isVisible === false) {
+        setIsVisible(!isVisible);
+        console.log( (diasNombreMes1 + diasNombreMes2) , " menor 30");
+        console.log(isVisible);
+      } else{
+        console.log("Error")
+        console.log( (diasNombreMes1 + diasNombreMes2) , " días");
+        console.log(isVisible);
+      }
+    }
 
   return (
     <div className="registros-table">
-    <h2>Registros almacenados {QtyRegistros} - {DiaFinDeTabla.toLocaleDateString('es-AR')} - {DiaInicioDeTabla.toLocaleDateString('es-AR') } - {FinDeMes.toLocaleDateString('es-AR')} - {diasNombreMes1} -- {diasNombreMes2} </h2>
+    <h2>Registros almacenados {QtyRegistros} -//- {diasNombreMes1} -- {diasNombreMes2} ++ {(diasNombreMes1 + diasNombreMes2)} ++ -* {diasNombreMes3} *- </h2>
       <div className="MovimientoDeTabla">
-      <button onClick={() => setCount((count) => count - 1)}id="guardar-btn">count is <span>{count}</span></button>
+      <button onClick={() =>{ setCount((count) => count - 1);handleClick()}} id="guardar-btn">count is <span>{count}</span></button>
       <button onClick={handleSort} id="guardar-btn">{sortOrder === 'asc' ? 'Ascendente' : 'Descendente'}</button>
-      <button onClick={() => setCount((count) => count + 1)}id="guardar-btn">count is <span>{count}</span></button>
+      <button onClick={() =>{ setCount((count) => count + 1); handleClick()}}id="guardar-btn">count is <span>{count}</span></button>
       </div>
-      <table >
+      <table>
         <thead>
           <tr className="NombreMes">
             <th colSpan={diasNombreMes1}><button id="btn-NombreMes">{addDay(DiaCentral,count -15).toLocaleString('es-AR', {month: 'short' })} </button> </th>
             <th colSpan={diasNombreMes2}><button id="btn-NombreMes">{addDay(FinDeMes,1).toLocaleString('es-AR', {month: 'short' })}</button></th>
-            <th hidden>{addDay(DiaCentral,count -13).toLocaleString('es-AR', {month: 'short' })}</th>
+            {isVisible && <th colSpan={diasNombreMes3}><button id="btn-NombreMes">{addDay(FinDeMes2,1).toLocaleString('es-AR', {month: 'short' })}</button></th>}
           </tr>
           <tr>
             <th><button id="btn-encabezado">{addDay(DiaCentral,count -15).toLocaleString('es-AR', {day:'2-digit'})}</button></th>
