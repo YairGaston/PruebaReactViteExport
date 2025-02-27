@@ -124,37 +124,38 @@ table {
   } */
   #btn-NombreMes{
     width: 100%;
-    text-transform: capitalize;
-    /*primeraletraenmayuscula*/font-size: small;
-    font-stretch:narrower;
+    text-transform: capitalize; /*primeraletraenmayuscula*/
     padding-top: 3px;
     margin-bottom: 3px;
     border: none;
     border-radius: 4px;
     height: 30px;
-    cursor: pointer;
+    cursor: context-menu;
     font-size:smaller;
+    background-color:hsla(180, 100%, 22%, 0.685);
     box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.25);
     -webkit-border-radius: 4px;
     -moz-border-radius: 4px;
     -ms-border-radius: 4px;
     -o-border-radius: 4px;
+    color: #ebece1;
 }
   table th{
    text-align: center;
    color: #36363a;
   }
-  button#logout-btn:hover, button#guardar-btn:hover, #btn-encabezado:hover, #btn-NombreMes:hover {
+  button#logout-btn:hover, button#guardar-btn:hover {
     background-color:hsla(180, 100%, 39%, 0.589)
   }
   #btn-encabezado{
+    text-align: center;
     padding-top: 3px;
     margin-bottom: 3px;
     width: 80%;
     height: 30px;
     border: none;
     border-radius: 4px;
-    cursor: pointer;
+    cursor:context-menu;
     font-size:smaller;
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);
     -webkit-border-radius: 4px;
@@ -162,7 +163,98 @@ table {
     -ms-border-radius: 4px;
     -o-border-radius: 4px;
 }
+.TituloNombre{ 
+    width: 100%;
+    height: 5em ;
+    text-transform: capitalize; /*primeraletraenmayuscula*/
+    border: none;
+    border-radius: 4px;
+    cursor: context-menu;
+    font-size:smaller;
+    background-color:hsla(180, 100%, 22%, 0.685);
+    box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.25);
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    -ms-border-radius: 4px;
+    -o-border-radius: 4px;
+    color: #ebece1;
+}
   /* Datos */
+
+  /* PopUp */
+  .popup-overlay { 
+    position: fixed; 
+    top: 0; 
+    left: 0; 
+    right: 0; 
+    bottom: 0; 
+    background-color: rgba(35, 33, 39, 0.8); 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    z-index: 1000; 
+  }
+  .popup {
+    display: flex;
+    flex-direction: column;
+    align-items:center; 
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    max-width: 50vw;
+    width: 90%;
+    -webkit-border-radius: 8px;
+    -moz-border-radius: 8px;
+    -ms-border-radius: 8px;
+    -o-border-radius: 8px;
+}
+      .NombreMesPopUp button{
+        width: 100% !important;
+        color: white;
+        background-color:rgba(35, 33, 39, 0.6) ;
+      }
+      .acciones-popup{
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        justify-content:end;
+     }
+
+      .btn-cerrar-popup { margin-top: 15px;
+        padding: 8px 16px; 
+        background-color: #bd0606; 
+        color: white; 
+        border: none; 
+        border-radius: 4px; 
+        cursor: pointer; 
+        max-width: 100px;
+        margin-right: 20px;
+      }
+        .btn-cerrar-popup:hover { background-color: #961313; 
+        }
+
+  .no-tiene-registro {
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+/*     display: flex;
+ */    align-items: center;
+    justify-content: center;
+  }
+  .tiene-registro {
+    background-color: #4CAF50;
+    color: white;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+/*     display: flex;
+ */    align-items: center;
+    justify-content: center;
+  }
+  .colNombre{
+    text-transform:capitalize;
+  }
   table td {
     padding: 5px;
     text-align: center;

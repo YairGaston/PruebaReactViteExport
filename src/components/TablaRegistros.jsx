@@ -23,6 +23,7 @@ export default function TablaRegistros({ setEditingId }) {
   const [diasNombreMes1, setDiasNombreMes1] = useState(0);
   const [diasNombreMes2, setDiasNombreMes2] = useState(0);
   const [diasNombreMes3, setDiasNombreMes3] = useState(0);
+  const [popupInfo, setPopupInfo] = useState(null);
 
   useEffect(() => {
     if (!auth.currentUser) {
@@ -149,13 +150,14 @@ export default function TablaRegistros({ setEditingId }) {
     const newSortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
     setSortOrder(newSortOrder);
   };
-
+/*   
+     --- ordenar lista ---
   const sortedRegistros = [...registros].sort((a, b) => {
     const dateA = a.fechaRegistro.toDate();
     const dateB = b.fechaRegistro.toDate();
     
     return sortOrder === 'asc' ? dateA - dateB : dateB - dateA;
-  });
+  }); */
 
   if (loading) return <div>Cargando registros...</div>;
   if (error) return <div className="error-message">{error}</div>;
@@ -186,59 +188,170 @@ export default function TablaRegistros({ setEditingId }) {
     }
   }
 
+  const uniqueNames = [...new Set(registros.map(registro => registro.nombre))].sort();
   return (
-    <div className="registros-table">
-      <h2>Registros almacenados {QtyRegistros} -//- {diasNombreMes1} -- {diasNombreMes2} ++ {(diasNombreMes1 + diasNombreMes2)} ++ -* {diasNombreMes3} *- </h2>
+    <div className="registros-table">-
+      <h2>Registros almacenados {QtyRegistros} </h2>
       <div className="MovimientoDeTabla">
         <button onClick={() => { setCount((count) => count - 1); handleClick(); }} id="guardar-btn">count is <span>{count}</span></button>
         <button onClick={handleSort} id="guardar-btn">{sortOrder === 'asc' ? 'Ascendente' : 'Descendente'}</button>
         <button onClick={() => { setCount((count) => count + 1); handleClick(); }} id="guardar-btn">count is <span>{count}</span></button>
       </div>
-      <table>
+     <table>
         <thead>
           <tr className="NombreMes">
-            <th colSpan={diasNombreMes1}><button id="btn-NombreMes">{addDay(new Date(), count - 15).toLocaleString('es-AR', { month: 'short' })} </button> </th>
-            {isVisible2 &&<th colSpan={diasNombreMes2}><button id="btn-NombreMes">{addDay(monthEnd(addDay(new Date(), count - 15)), 1).toLocaleString('es-AR', { month: 'short' })}</button></th>}
-            {isVisible && <th colSpan={diasNombreMes3}><button id="btn-NombreMes">{addDay(monthEnd(addDay(monthEnd(addDay(new Date(), count - 15)), 1)), 1).toLocaleString('es-AR', { month: 'short' })}</button></th>}
+            <th rowSpan={2} ><button className="TituloNombre">Nombre</button></th>
+            
+            <th colSpan={diasNombreMes1}><button id="btn-NombreMes">{addDay(new Date(), count - 15).toLocaleString('es-AR', { month: 'short' , year:'2-digit' })} </button> </th>
+            {isVisible2 &&<th colSpan={diasNombreMes2}><button id="btn-NombreMes">{addDay(monthEnd(addDay(new Date(), count - 15)), 1).toLocaleString('es-AR', { month: 'short' , year:'2-digit' })}</button></th>}
+            {isVisible && <th colSpan={diasNombreMes3}><button id="btn-NombreMes">{addDay(monthEnd(addDay(monthEnd(addDay(new Date(), count - 15)), 1)), 1).toLocaleString('es-AR', { month: 'short'  , year:'2-digit'})}</button></th>}
           </tr>
           <tr>
             <th><button id="btn-encabezado">{addDay(new Date(), count - 15).toLocaleString('es-AR', { day: '2-digit' })}</button></th>
             <th><button id="btn-encabezado">{addDay(new Date(), count - 14).toLocaleString('es-AR', { day: '2-digit' })}</button></th>
-            <th>{addDay(new Date(), count - 13).toLocaleString('es-AR', { day: '2-digit' })}</th>
-            <th>{addDay(new Date(), count - 12).toLocaleString('es-AR', { day: '2-digit' })}</th>
-            <th>{addDay(new Date(), count - 11).toLocaleString('es-AR', { day: '2-digit' })}</th>
-            <th>{addDay(new Date(), count - 10).toLocaleString('es-AR', { day: '2-digit' })}</th>
-            <th>{addDay(new Date(), count - 9).toLocaleString('es-AR', { day: '2-digit' })}</th>
-            <th>{addDay(new Date(), count - 8).toLocaleString('es-AR', { day: '2-digit' })}</th>
-            <th>{addDay(new Date(), count - 7).toLocaleString('es-AR', { day: '2-digit' })}</th>
-            <th>{addDay(new Date(), count - 6).toLocaleString('es-AR', { day: '2-digit' })}</th>
-            <th>{addDay(new Date(), count - 5).toLocaleString('es-AR', { day: '2-digit' })}</th>
-            <th>{addDay(new Date(), count - 4).toLocaleString('es-AR', { day: '2-digit' })}</th>
-            <th>{addDay(new Date(), count - 3).toLocaleString('es-AR', { day: '2-digit' })}</th>
-            <th>{addDay(new Date(), count - 2).toLocaleString('es-AR', { day: '2-digit' })}</th>
-            <th>{addDay(new Date(), count - 1).toLocaleString('es-AR', { day: '2-digit' })}</th>
-            <th>{addDay(new Date(), count + 0).toLocaleString('es-AR', { day: '2-digit' })}</th>
-            <th>{addDay(new Date(), count + 1).toLocaleString('es-AR', { day: '2-digit' })}</th>
-            <th>{addDay(new Date(), count + 2).toLocaleString('es-AR', { day: '2-digit' })}</th>
-            <th>{addDay(new Date(), count + 3).toLocaleString('es-AR', { day: '2-digit' })}</th>
-            <th>{addDay(new Date(), count + 4).toLocaleString('es-AR', { day: '2-digit' })}</th>
-            <th>{addDay(new Date(), count + 5).toLocaleString('es-AR', { day: '2-digit' })}</th>
-            <th>{addDay(new Date(), count + 6).toLocaleString('es-AR', { day: '2-digit' })}</th>
-            <th>{addDay(new Date(), count + 7).toLocaleString('es-AR', { day: '2-digit' })}</th>
-            <th>{addDay(new Date(), count + 8).toLocaleString('es-AR', { day: '2-digit' })}</th>
-            <th>{addDay(new Date(), count + 9).toLocaleString('es-AR', { day: '2-digit' })}</th>
-            <th>{addDay(new Date(), count + 10).toLocaleString('es-AR', { day: '2-digit' })}</th>
-            <th>{addDay(new Date(), count + 11).toLocaleString('es-AR', { day: '2-digit' })}</th>
-            <th>{addDay(new Date(), count + 12).toLocaleString('es-AR', { day: '2-digit' })}</th>
-            <th>{addDay(new Date(), count + 13).toLocaleString('es-AR', { day: '2-digit' })}</th>
-            <th>{addDay(new Date(), count + 14).toLocaleString('es-AR', { day: '2-digit' })}</th>
-            <th>{addDay(new Date(), count + 15).toLocaleString('es-AR', { day: '2-digit' })}</th>
+            <th><button id="btn-encabezado">{addDay(new Date(), count - 13).toLocaleString('es-AR', { day: '2-digit' })}</button></th>
+            <th><button id="btn-encabezado">{addDay(new Date(), count - 12).toLocaleString('es-AR', { day: '2-digit' })}</button></th>
+            <th><button id="btn-encabezado">{addDay(new Date(), count - 11).toLocaleString('es-AR', { day: '2-digit' })}</button></th>
+            <th><button id="btn-encabezado">{addDay(new Date(), count - 10).toLocaleString('es-AR', { day: '2-digit' })}</button></th>
+            <th><button id="btn-encabezado">{addDay(new Date(), count - 9).toLocaleString('es-AR', { day: '2-digit' })}</button></th>
+            <th><button id="btn-encabezado">{addDay(new Date(), count - 8).toLocaleString('es-AR', { day: '2-digit' })}</button></th>
+            <th><button id="btn-encabezado">{addDay(new Date(), count - 7).toLocaleString('es-AR', { day: '2-digit' })}</button></th>
+            <th><button id="btn-encabezado">{addDay(new Date(), count - 6).toLocaleString('es-AR', { day: '2-digit' })}</button></th>
+            <th><button id="btn-encabezado">{addDay(new Date(), count - 5).toLocaleString('es-AR', { day: '2-digit' })}</button></th>
+            <th><button id="btn-encabezado">{addDay(new Date(), count - 4).toLocaleString('es-AR', { day: '2-digit' })}</button></th>
+            <th><button id="btn-encabezado">{addDay(new Date(), count - 3).toLocaleString('es-AR', { day: '2-digit' })}</button></th>
+            <th><button id="btn-encabezado">{addDay(new Date(), count - 2).toLocaleString('es-AR', { day: '2-digit' })}</button></th>
+            <th><button id="btn-encabezado">{addDay(new Date(), count - 1).toLocaleString('es-AR', { day: '2-digit' })}</button></th>
+            <th><button id="btn-encabezado">{addDay(new Date(), count + 0).toLocaleString('es-AR', { day: '2-digit' })}</button></th>
+            <th><button id="btn-encabezado">{addDay(new Date(), count + 1).toLocaleString('es-AR', { day: '2-digit' })}</button></th>
+            <th><button id="btn-encabezado">{addDay(new Date(), count + 2).toLocaleString('es-AR', { day: '2-digit' })}</button></th>
+            <th><button id="btn-encabezado">{addDay(new Date(), count + 3).toLocaleString('es-AR', { day: '2-digit' })}</button></th>
+            <th><button id="btn-encabezado">{addDay(new Date(), count + 4).toLocaleString('es-AR', { day: '2-digit' })}</button></th>
+            <th><button id="btn-encabezado">{addDay(new Date(), count + 5).toLocaleString('es-AR', { day: '2-digit' })}</button></th>
+            <th><button id="btn-encabezado">{addDay(new Date(), count + 6).toLocaleString('es-AR', { day: '2-digit' })}</button></th>
+            <th><button id="btn-encabezado">{addDay(new Date(), count + 7).toLocaleString('es-AR', { day: '2-digit' })}</button></th>
+            <th><button id="btn-encabezado">{addDay(new Date(), count + 8).toLocaleString('es-AR', { day: '2-digit' })}</button></th>
+            <th><button id="btn-encabezado">{addDay(new Date(), count + 9).toLocaleString('es-AR', { day: '2-digit' })}</button></th>
+            <th><button id="btn-encabezado">{addDay(new Date(), count + 10).toLocaleString('es-AR', { day: '2-digit' })}</button></th>
+            <th><button id="btn-encabezado">{addDay(new Date(), count + 11).toLocaleString('es-AR', { day: '2-digit' })}</button></th>
+            <th><button id="btn-encabezado">{addDay(new Date(), count + 12).toLocaleString('es-AR', { day: '2-digit' })}</button></th>
+            <th><button id="btn-encabezado">{addDay(new Date(), count + 13).toLocaleString('es-AR', { day: '2-digit' })}</button></th>
+            <th><button id="btn-encabezado">{addDay(new Date(), count + 14).toLocaleString('es-AR', { day: '2-digit' })}</button></th>
+            <th><button id="btn-encabezado">{addDay(new Date(), count + 15).toLocaleString('es-AR', { day: '2-digit' })}</button></th>
           </tr>
         </thead>
         <tbody>
-          {sortedRegistros.map((registro) => (
+        {uniqueNames.map((nombre) => {
+  // Obtener todos los registros para este nombre
+  const registrosDelNombre = registros.filter(registro => registro.nombre === nombre);
+  
+  return (
+    <tr key={nombre}>
+      <td><button className='colNombre'  >{nombre.toLowerCase()}</button></td>
+      {Array(31).fill().map((_, index) => {
+        // Calcular la fecha para esta celda
+        const fechaCelda = addDay(new Date(), count - 15 + index).toLocaleDateString('es-AR');
+        
+        // Verificar si hay un registro para esta fecha
+        const tieneRegistro = registrosDelNombre.some(registro => 
+          registro.fechaRegistro.toDate().toLocaleDateString('es-AR') === fechaCelda
+        );
+
+        return (
+          <td key={index}>
+            <button 
+              className={tieneRegistro ? 'tiene-registro' : 'no-tiene-registro'}
+              /* style={tieneRegistro ? { backgroundColor: '#4CAF50', color: 'white' } : {}} */
+              title={tieneRegistro ? 'Hay un registro en esta fecha' : ''}
+              onClick={() => {
+                if (tieneRegistro) {
+                  const registro = registrosDelNombre.find(r => 
+                    r.fechaRegistro.toDate().toLocaleDateString('es-AR') === fechaCelda
+                  );
+                  /* alert(`Registro de ${registrosDelNombre.length} ${registro.nombre} el día ${fechaCelda}`); */
+                  setPopupInfo({
+                    lista:registrosDelNombre,
+                    qty: registrosDelNombre.length,
+                    nombre: registro.nombre,
+                    fecha: fechaCelda,
+                    email: registro.email,
+                    telefono: registro.telefono,
+                    direccion: registro.direccion
+                  });
+                }
+              }}
+            >
+              {tieneRegistro ? '✓' : ''}
+            </button>
+
+
+          </td>
+          
+        );
+        
+      })
+      }
+    </tr>
+    
+  );
+  
+}
+)
+}
+{/*           {sortedRegistros.map((registro) => (
             <tr key={registro.id}>
-              <td><button>{registro.nombre}</button></td>
+              {<td><button>{registro.nombre}</button></td>}
+              <td><button>{registro.email}</button></td>
+              <td><button>{registro.telefono}</button></td>
+              <td><button>{registro.direccion}</button></td>
+              <td><button>{registro.edad}</button></td>
+              <td><button>{registro.fechaRegistro.toDate().toLocaleDateString()}</button></td>
+              <td><button>{registro.fechaRegistro.toDate().toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false })}</button></td>
+              <td>
+                <button 
+                  className="editar-btn"
+                  onClick={() => {handleEditar(registro.id), mostrarFormulario.classList.toggle("oculto")}}
+                >
+                  Editar
+                </button>
+                <button
+                  className="eliminar-btn"
+                  onClick={() => handleEliminar(registro.id)}
+                >
+                  Eliminar
+                </button>
+              </td>
+            </tr>
+          ))} */}
+        </tbody>
+      </table>
+      <br />
+      <div className="export-buttons">
+        <button onClick={exportToExcel} id="guardar-btn">Exportar a Excel</button>
+        <button onClick={exportToPDF} id="guardar-btn">Exportar a PDF</button>
+      </div>
+      {popupInfo && (
+        <div className="popup-overlay">
+          <div className="popup">
+          <h3>Detalles de Registros</h3>
+          <table>
+            <thead>
+            <tr className="NombreMesPopUp">
+            <th><button id="btn-encabezado">Nombre</button></th>
+            <th><button id="btn-encabezado">Email</button></th>
+            <th><button id="btn-encabezado">Teléfono</button></th>
+            <th><button id="btn-encabezado">Dirección</button></th>
+            <th><button id="btn-encabezado">Edad</button></th>
+            <th><button id="btn-encabezado">Fecha</button></th>
+            <th><button id="btn-encabezado">Hora</button></th>
+            <th><button id="btn-encabezado">Acciones</button></th>
+               </tr>
+
+            </thead>
+            <tbody>
+            {popupInfo.lista.map((registro) => (
+            <tr key={registro.id}>
+              {<td><button>{registro.nombre}</button></td>}
               <td><button>{registro.email}</button></td>
               <td><button>{registro.telefono}</button></td>
               <td><button>{registro.direccion}</button></td>
@@ -261,17 +374,17 @@ export default function TablaRegistros({ setEditingId }) {
               </td>
             </tr>
           ))}
-        </tbody>
-      </table>
-      <br />
-      <div className="export-buttons">
-        <button onClick={exportToExcel} id="guardar-btn">Exportar a Excel</button>
-        <button onClick={exportToPDF} id="guardar-btn">Exportar a PDF</button>
-      </div>
+            </tbody>
+          </table>
+          <div className='acciones-popup'>  
+          <button className='btn-cerrar-popup' onClick={() => setPopupInfo(null)}>Cerrar</button>
+          </div>
+          </div>
+        </div>
+)}
     </div>
   );
 }
-
 TablaRegistros.propTypes = {
   setEditingId: PropTypes.func.isRequired,
 };
