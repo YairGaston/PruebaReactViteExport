@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 import { useFirebase } from '../context/FirebaseContext';
 import { addDoc, collection, doc, updateDoc, getDoc } from 'firebase/firestore';
 
-export default function Formulario({ editingId, setEditingId , initialData, onCancel, onSuccess }) {
+export default function Formulario({ editingId, /* setEditingId , */ initialData, onCancel, onSuccess }) {
   const { db } = useFirebase();
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = /* useState(initialData); */ useState({
     nombre: '',
     email: '',
     telefono: '',
@@ -47,14 +47,16 @@ export default function Formulario({ editingId, setEditingId , initialData, onCa
       const datosPersona = { ...formData, fechaRegistro: new Date() };
       
       if (editingId) {
-        await updateDoc(doc(db, 'datosPersonales', editingId), datosPersona);
+        await updateDoc(doc(db, 'datosPersonales', editingId), /* formData */ datosPersona);
       } else {
-        await addDoc(collection(db, 'datosPersonales'), datosPersona);
+        await addDoc(collection(db, 'datosPersonales'), /* formData */ datosPersona);
       }
-      
-      if (onSuccess) onSuccess();
-      setFormData({ nombre: '', email: '', telefono: '', direccion: '', edad: '' });
-      setEditingId(null);
+        setFormData({ nombre: '', email: '', telefono: '', direccion: '', edad: '' });
+        onSuccess({ id: editingId, ...formData });
+       /*  setEditingId(null); */
+       
+
+
     } catch (error) {
       console.error(error);
     }
@@ -63,22 +65,9 @@ export default function Formulario({ editingId, setEditingId , initialData, onCa
     e.preventDefault();
     setFormData({ nombre: '', email: '', telefono: '', direccion: '', edad: '' });
     if (onCancel) onCancel();
-  };
-
-/*   const handleEliminar = async (e) => {
-    e.preventDefault();
-    try {
-      setFormData({ nombre: '', email: '', telefono: '', direccion: '', edad: '' });
-      setEditingId(null);
-    } catch (error) {
-      console.error(error);
-    }
-
-    }; */
-    
+  };    
   return (
   <form onSubmit={handleSubmit} onReset={handleReset} className="formulario">
-    {/* <form onSubmit={handleSubmit} onReset={handleEliminar} id="formulario" className="oculto"> */}
       
         <label htmlFor="nombre">Nombre:</label>
         <input
@@ -86,7 +75,7 @@ export default function Formulario({ editingId, setEditingId , initialData, onCa
           id="nombre"
           name="nombre"
           value={formData.nombre}
-          onChange={handleChange}
+          onChange={handleChange/* (e) => setFormData({ ...formData, nombre: e.target.value }) */} 
           required
         />
    
@@ -143,7 +132,7 @@ export default function Formulario({ editingId, setEditingId , initialData, onCa
 
 Formulario.propTypes = {
   editingId: PropTypes.string,
-  setEditingId: PropTypes.func.isRequired,
+  /* setEditingId: PropTypes.func.isRequired, */
   initialData: PropTypes.shape({
     nombre: PropTypes.string,
     email: PropTypes.string,

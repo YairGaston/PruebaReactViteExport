@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
 import Auth from './components/Auth';
-import Formulario from './components/Formulario';
+/* import Formulario from './components/Formulario'; */
 import TablaRegistros from './components/TablaRegistros';
 import { useFirebase } from './context/FirebaseContext';
 import './styles/App.css';
 
 export default function App() {
   const { auth } = useFirebase();
-  const [editingId, setEditingId] = useState(null);
+  const [/* editingId */, setEditingId] = useState(null);
   const [user, setUser] = useState(null);
 
   useEffect(() => {
@@ -25,10 +25,10 @@ export default function App() {
         <div className="main-content">
           <h1>Registro de Datos - Prueba React + Vite</h1>
           
-          <Formulario 
+          {/* <Formulario 
             editingId={editingId}
             setEditingId={setEditingId}
-          />
+          /> */} 
           
           <TablaRegistros 
             setEditingId={setEditingId}

@@ -7,11 +7,10 @@ import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import { addDay } from "@formkit/tempo";
 import { monthEnd } from "@formkit/tempo";
-import { diffDays } from "@formkit/tempo"
+import { diffDays } from "@formkit/tempo";
 import Formulario from './Formulario';
 /* import { format } from "@formkit/tempo" */
 
-const mostrarFormulario = document.getElementById("formulario");
 export default function TablaRegistros({ setEditingId }) {
   const { db, auth } = useFirebase();
   const [registros, setRegistros] = useState([]);
@@ -27,6 +26,7 @@ export default function TablaRegistros({ setEditingId }) {
   const [popupInfo, setPopupInfo] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [editingRecord, setEditingRecord] = useState(null);
+  /* const [updatedRecord, setUpdatedRecord] = useState(null); */
 
   useEffect(() => {
     if (!auth.currentUser) {
@@ -55,6 +55,8 @@ export default function TablaRegistros({ setEditingId }) {
     return () => unsubscribe();
   }, [db, auth]);
 
+
+  
   useEffect(() => {
     const DiaCentral = new Date();
     const DiaInicioDeTabla = addDay(DiaCentral, count - 15);
@@ -74,7 +76,7 @@ export default function TablaRegistros({ setEditingId }) {
     setDiasNombreMes3(diasNombreMes3);
     handleClick();
 
-  }, [count]);
+  }, [count/* , handleClick */]);
 
   const handleEditar = (id) => {
     setEditingId(id);
@@ -89,6 +91,7 @@ export default function TablaRegistros({ setEditingId }) {
     try {
       await deleteDoc(doc(db, 'datosPersonales', id));
       setPopupInfo(null);
+      console.log(popupInfo.lista);
     } catch (error) {
       setError('Error al eliminar el registro');
       console.error(error);
@@ -196,7 +199,7 @@ export default function TablaRegistros({ setEditingId }) {
 
   const uniqueNames = [...new Set(registros.map(registro => registro.nombre))].sort();
   return (
-    <div className="registros-table">-
+    <div className="registros-table">
       <h2>Registros almacenados {QtyRegistros} </h2>
       <div className="MovimientoDeTabla">
         <button onClick={() => { setCount((count) => count - 1); handleClick(); }} id="guardar-btn">count is <span>{count}</span></button>
@@ -250,32 +253,28 @@ export default function TablaRegistros({ setEditingId }) {
         {uniqueNames.map((nombre) => {
         // Obtener todos los registros para este nombre
         const registrosDelNombre = registros.filter(registro => registro.nombre === nombre);
-        return (
+        return ( // -------------- Coloca los nombres unicos en la primera columna ----------------
           <tr key={nombre}>
             <td><button className='colNombre'  >{nombre.toLowerCase()}</button></td>
             
             {Array(31).fill().map((_, index) => {
               // Calcular la fecha para esta celda
               const fechaCelda = addDay(new Date(), count - 15 + index).toLocaleDateString('es-AR');
-              // Verificar si hay un registro para esta fecha
-              const tieneRegistro = registrosDelNombre.some(registro => 
+              // -----------------   Verificar si hay un registro para esta fecha    ----------------------
+               const tieneRegistro = registrosDelNombre.some(registro => 
                 registro.fechaRegistro.toDate().toLocaleDateString('es-AR') === fechaCelda
               );
+              /* ----------------   Obtener los registros para el día y nombre  -------------------- */
               const registrosDelNombreDia = registrosDelNombre.filter(registro => registro.fechaRegistro.toDate().toLocaleDateString('es-AR') === fechaCelda);
 
-              return (
+              return ( // ------------------  Rellena la fila activando los botones si es que tiene registros ese día -------
                 <td key={index}>
                   <button 
                     className={tieneRegistro ? 'tiene-registro' : 'no-tiene-registro'}
-                    /* style={tieneRegistro ? { backgroundColor: '#4CAF50', color: 'white' } : {}} */
                     title={tieneRegistro ? `Hay ${registrosDelNombreDia.length} registro en esta fecha` : ''}
                     onClick={() => {
                       if (tieneRegistro) {
-                       /*  const registro = registrosDelNombre.find(r => 
-                          r.fechaRegistro.toDate().toLocaleDateString('es-AR') === fechaCelda
-                        ); */
                         const registrosDelNombreDia = registrosDelNombre.filter(registro => registro.fechaRegistro.toDate().toLocaleDateString('es-AR') === fechaCelda);
-                        /* alert(`Registro de ${registrosDelNombre.length} ${registro.nombre} el día ${fechaCelda}`); */
                         setPopupInfo({
                           lista:registrosDelNombreDia,
                           qty: registrosDelNombreDia.length,
@@ -329,10 +328,13 @@ export default function TablaRegistros({ setEditingId }) {
         <button onClick={exportToExcel} id="guardar-btn">Exportar a Excel</button>
         <button onClick={exportToPDF} id="guardar-btn">Exportar a PDF</button>
       </div>
+
+      {/* ----------------------   PopUp    ------------------------------------*/}
+      
       {popupInfo && (
         <div className="popup-overlay">
           <div className="popup">
-          {!showForm ? (
+          {!showForm ? ( /* -----  Aquí se decide si se abre el formmulario dentro del PopUp  --------- */
         <>
           <h3>Detalles de Registros</h3>
           <table>
@@ -362,7 +364,7 @@ export default function TablaRegistros({ setEditingId }) {
               <td>
                 <button 
                   className="editar-btn"
-                  onClick={() => {handleEditar(registro.id), mostrarFormulario.classList.toggle("oculto")}}
+                  onClick={() => {handleEditar(registro.id)/* , mostrarFormulario.classList.toggle("oculto") */}}
                 >
                   Editar
                 </button>
@@ -382,29 +384,46 @@ export default function TablaRegistros({ setEditingId }) {
           </div>
           </>
       ) : (
-        <>
+        <>  {/*---------------------  muestra el Formulario para editar ---------*/}
           <h3>Editar Registro</h3>
           <Formulario 
             editingId={editingRecord.id}
             initialData={editingRecord}
+
             onCancel={() => {
               setShowForm(false);
               setEditingRecord(null);
             }}
-            onSuccess={() => {
+
+            onSuccess={(nuevoRegistro) => {
+              if (!nuevoRegistro || !nuevoRegistro.fechaRegistro) {
+                console.error('Datos del registro incompletos');
+                return;
+              }
+              // Actualiza el estado `registros` con los nuevos datos
+              setRegistros((prevRegistros) => {
+                const updatedRegistros = prevRegistros.map((registro) => 
+                  registro.id === nuevoRegistro.id ? nuevoRegistro : registro
+                );
+
+              // --------   Actualiza el popupInfo con los registros actualizados
+              const fechaCelda2 = nuevoRegistro.fechaRegistro.toDate().toLocaleDateString('es-AR')
+              const registrosDelNombre2 = updatedRegistros.filter(registro => registro.nombre === nuevoRegistro.nombre);
+              const registrosDelNombreDia2 = registrosDelNombre2.filter(registro => registro.fechaRegistro.toDate().toLocaleDateString('es-AR') === fechaCelda2);
+              setPopupInfo({
+                lista:registrosDelNombreDia2,
+                qty: registrosDelNombreDia2.length,
+                nombre: nuevoRegistro.nombre,
+                fecha: fechaCelda2,
+                email: nuevoRegistro.email,
+                telefono: nuevoRegistro.telefono,
+                direccion: nuevoRegistro.direccion
+              });
+              return updatedRegistros;              
+            });
               setShowForm(false);
               setEditingRecord(null);
-              // Actualiza el popupInfo con los registros actualizados
-              const registrosActualizados = registros.filter(registro => 
-                registro.nombre === popupInfo.nombre &&
-                registro.fechaRegistro.toDate().toLocaleDateString('es-AR') === popupInfo.fecha
-              );
-              setPopupInfo({
-                ...popupInfo,
-                lista: registrosActualizados,
-                qty: registrosActualizados.length
-              });
-              /* setPopupInfo(null) */;
+
             }}
           />
         </>
