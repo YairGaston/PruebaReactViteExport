@@ -8,6 +8,7 @@ import 'jspdf-autotable';
 import { addDay } from "@formkit/tempo";
 import { monthEnd } from "@formkit/tempo";
 import { diffDays } from "@formkit/tempo"
+import Formulario from './Formulario';
 /* import { format } from "@formkit/tempo" */
 
 const mostrarFormulario = document.getElementById("formulario");
@@ -24,6 +25,8 @@ export default function TablaRegistros({ setEditingId }) {
   const [diasNombreMes2, setDiasNombreMes2] = useState(0);
   const [diasNombreMes3, setDiasNombreMes3] = useState(0);
   const [popupInfo, setPopupInfo] = useState(null);
+  const [showForm, setShowForm] = useState(false);
+  const [editingRecord, setEditingRecord] = useState(null);
 
   useEffect(() => {
     if (!auth.currentUser) {
@@ -75,7 +78,9 @@ export default function TablaRegistros({ setEditingId }) {
 
   const handleEditar = (id) => {
     setEditingId(id);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setEditingRecord(registros.find(registro => registro.id === id));
+    setShowForm(true);
+    /* window.scrollTo({ top: 0, behavior: 'smooth' }); */
   };
 
   const handleEliminar = async (id) => {
@@ -83,6 +88,7 @@ export default function TablaRegistros({ setEditingId }) {
     
     try {
       await deleteDoc(doc(db, 'datosPersonales', id));
+      setPopupInfo(null);
     } catch (error) {
       setError('Error al eliminar el registro');
       console.error(error);
@@ -242,87 +248,80 @@ export default function TablaRegistros({ setEditingId }) {
         </thead>
         <tbody>
         {uniqueNames.map((nombre) => {
-  // Obtener todos los registros para este nombre
-  const registrosDelNombre = registros.filter(registro => registro.nombre === nombre);
-  
-  return (
-    <tr key={nombre}>
-      <td><button className='colNombre'  >{nombre.toLowerCase()}</button></td>
-      {Array(31).fill().map((_, index) => {
-        // Calcular la fecha para esta celda
-        const fechaCelda = addDay(new Date(), count - 15 + index).toLocaleDateString('es-AR');
-        
-        // Verificar si hay un registro para esta fecha
-        const tieneRegistro = registrosDelNombre.some(registro => 
-          registro.fechaRegistro.toDate().toLocaleDateString('es-AR') === fechaCelda
-        );
-
+        // Obtener todos los registros para este nombre
+        const registrosDelNombre = registros.filter(registro => registro.nombre === nombre);
         return (
-          <td key={index}>
-            <button 
-              className={tieneRegistro ? 'tiene-registro' : 'no-tiene-registro'}
-              /* style={tieneRegistro ? { backgroundColor: '#4CAF50', color: 'white' } : {}} */
-              title={tieneRegistro ? 'Hay un registro en esta fecha' : ''}
-              onClick={() => {
-                if (tieneRegistro) {
-                  const registro = registrosDelNombre.find(r => 
-                    r.fechaRegistro.toDate().toLocaleDateString('es-AR') === fechaCelda
-                  );
-                  /* alert(`Registro de ${registrosDelNombre.length} ${registro.nombre} el día ${fechaCelda}`); */
-                  setPopupInfo({
-                    lista:registrosDelNombre,
-                    qty: registrosDelNombre.length,
-                    nombre: registro.nombre,
-                    fecha: fechaCelda,
-                    email: registro.email,
-                    telefono: registro.telefono,
-                    direccion: registro.direccion
-                  });
-                }
-              }}
-            >
-              {tieneRegistro ? '✓' : ''}
-            </button>
+          <tr key={nombre}>
+            <td><button className='colNombre'  >{nombre.toLowerCase()}</button></td>
+            
+            {Array(31).fill().map((_, index) => {
+              // Calcular la fecha para esta celda
+              const fechaCelda = addDay(new Date(), count - 15 + index).toLocaleDateString('es-AR');
+              // Verificar si hay un registro para esta fecha
+              const tieneRegistro = registrosDelNombre.some(registro => 
+                registro.fechaRegistro.toDate().toLocaleDateString('es-AR') === fechaCelda
+              );
+              const registrosDelNombreDia = registrosDelNombre.filter(registro => registro.fechaRegistro.toDate().toLocaleDateString('es-AR') === fechaCelda);
 
-
-          </td>
-          
+              return (
+                <td key={index}>
+                  <button 
+                    className={tieneRegistro ? 'tiene-registro' : 'no-tiene-registro'}
+                    /* style={tieneRegistro ? { backgroundColor: '#4CAF50', color: 'white' } : {}} */
+                    title={tieneRegistro ? `Hay ${registrosDelNombreDia.length} registro en esta fecha` : ''}
+                    onClick={() => {
+                      if (tieneRegistro) {
+                       /*  const registro = registrosDelNombre.find(r => 
+                          r.fechaRegistro.toDate().toLocaleDateString('es-AR') === fechaCelda
+                        ); */
+                        const registrosDelNombreDia = registrosDelNombre.filter(registro => registro.fechaRegistro.toDate().toLocaleDateString('es-AR') === fechaCelda);
+                        /* alert(`Registro de ${registrosDelNombre.length} ${registro.nombre} el día ${fechaCelda}`); */
+                        setPopupInfo({
+                          lista:registrosDelNombreDia,
+                          qty: registrosDelNombreDia.length,
+                          nombre: registrosDelNombreDia.nombre,
+                          fecha: fechaCelda,
+                          email: registrosDelNombreDia.email,
+                          telefono: registrosDelNombreDia.telefono,
+                          direccion: registrosDelNombreDia.direccion
+                        });
+                      }}}>
+                    {tieneRegistro ? '✓' : ''}
+                  </button>
+                </td>
+              );
+            })
+            }
+          </tr>
         );
-        
-      })
       }
-    </tr>
-    
-  );
-  
-}
-)
-}
-{/*           {sortedRegistros.map((registro) => (
-            <tr key={registro.id}>
-              {<td><button>{registro.nombre}</button></td>}
-              <td><button>{registro.email}</button></td>
-              <td><button>{registro.telefono}</button></td>
-              <td><button>{registro.direccion}</button></td>
-              <td><button>{registro.edad}</button></td>
-              <td><button>{registro.fechaRegistro.toDate().toLocaleDateString()}</button></td>
-              <td><button>{registro.fechaRegistro.toDate().toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false })}</button></td>
-              <td>
-                <button 
-                  className="editar-btn"
-                  onClick={() => {handleEditar(registro.id), mostrarFormulario.classList.toggle("oculto")}}
-                >
-                  Editar
-                </button>
-                <button
-                  className="eliminar-btn"
-                  onClick={() => handleEliminar(registro.id)}
-                >
-                  Eliminar
-                </button>
-              </td>
-            </tr>
-          ))} */}
+      )
+      }
+      {/*           {sortedRegistros.map((registro) => (
+                  <tr key={registro.id}>
+                    {<td><button>{registro.nombre}</button></td>}
+                    <td><button>{registro.email}</button></td>
+                    <td><button>{registro.telefono}</button></td>
+                    <td><button>{registro.direccion}</button></td>
+                    <td><button>{registro.edad}</button></td>
+                    <td><button>{registro.fechaRegistro.toDate().toLocaleDateString()}</button></td>
+                    <td><button>{registro.fechaRegistro.toDate().toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false })}</button></td>
+                    <td>
+                      <button 
+                        className="editar-btn"
+                        onClick={() => {handleEditar(registro.id), mostrarFormulario.classList.toggle("oculto")}}
+                      >
+                        Editar
+                      </button>
+                      <button
+                        className="eliminar-btn"
+                        onClick={() => handleEliminar(registro.id)}
+                      >
+                        Eliminar
+                      </button>
+                    </td>
+                  </tr>
+                ))} */}
         </tbody>
       </table>
       <br />
@@ -333,6 +332,8 @@ export default function TablaRegistros({ setEditingId }) {
       {popupInfo && (
         <div className="popup-overlay">
           <div className="popup">
+          {!showForm ? (
+        <>
           <h3>Detalles de Registros</h3>
           <table>
             <thead>
@@ -379,6 +380,35 @@ export default function TablaRegistros({ setEditingId }) {
           <div className='acciones-popup'>  
           <button className='btn-cerrar-popup' onClick={() => setPopupInfo(null)}>Cerrar</button>
           </div>
+          </>
+      ) : (
+        <>
+          <h3>Editar Registro</h3>
+          <Formulario 
+            editingId={editingRecord.id}
+            initialData={editingRecord}
+            onCancel={() => {
+              setShowForm(false);
+              setEditingRecord(null);
+            }}
+            onSuccess={() => {
+              setShowForm(false);
+              setEditingRecord(null);
+              // Actualiza el popupInfo con los registros actualizados
+              const registrosActualizados = registros.filter(registro => 
+                registro.nombre === popupInfo.nombre &&
+                registro.fechaRegistro.toDate().toLocaleDateString('es-AR') === popupInfo.fecha
+              );
+              setPopupInfo({
+                ...popupInfo,
+                lista: registrosActualizados,
+                qty: registrosActualizados.length
+              });
+              /* setPopupInfo(null) */;
+            }}
+          />
+        </>
+      )}
           </div>
         </div>
 )}
