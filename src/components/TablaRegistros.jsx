@@ -9,6 +9,7 @@ import { addDay, monthStart, format } from "@formkit/tempo";
 import { monthEnd } from "@formkit/tempo";
 import { diffDays } from "@formkit/tempo";
 import Formulario from './Formulario';
+import { useTheme } from '../context/ThemeContext';
 /* import { format } from "@formkit/tempo" */
 
 export default function TablaRegistros({ setEditingId }) {
@@ -29,8 +30,12 @@ export default function TablaRegistros({ setEditingId }) {
   const [showForm, setShowForm] = useState(false);
   const [editingRecord, setEditingRecord] = useState(null);
   const [showFormNuevo, setShowFormNuevo] = useState(false);
+  const { tema, /* toggleTema */ } = useTheme();
   /* const [updatedRecord, setUpdatedRecord] = useState(null); */
-
+  if (!tema && typeof tema !== 'boolean') {
+    console.log('Tema no está definido:', tema);
+  }
+  console.log('Tema en MiComponente:', tema);
 useEffect(() => {
 if (!auth.currentUser) {
   setLoading(false);
@@ -249,20 +254,21 @@ console.error(error);
     return 0;
   }
   );
+  console.log(tema);
   return (
-    <div className="registros-table">
-      <h2>Registros almacenados {QtyRegistros}</h2>
+    <div className={tema ? 'temaPrueba registros-table' : 'temaClaro registros-table'}>
+      <h2 className={tema ? 'temaPrueba' : 'temaClaro'}>Registros almacenados {QtyRegistros}</h2>
       <div className="MovimientoDeTabla">
-        <button onClick={() => { setCount((count) => count - 1); handleClick(); }} id="guardar-btn"> {'< día'} <span>{count}</span></button>
-        <button onClick={() => { setCount((count) => count - RestarMes); handleClick(); }} id="guardar-btn"> {'<< mes'} <span>{RestarMes}</span></button>
+        <button onClick={() => { setCount((count) => count - 1); handleClick(); }} id="guardar-btn"> {'< Día'} </button>
+        <button onClick={() => { setCount((count) => count - RestarMes); handleClick(); }} id="guardar-btn"> {'<< Mes'} </button>
 
         <div>
-          <button onClick={() => { setCount(0); handleClick(); }} id="guardar-btn">hoy</button>
+          <button onClick={() => { setCount(0); handleClick(); }} id="guardar-btn">Hoy</button>
         {/* <button onClick={handleSort} id="guardar-btn">{sortOrder === 'asc' ? 'Ascendente' : 'Descendente'}</button> */}
         </div>
-        <button onClick={() => { setCount((count) => count + SumarMes); handleClick(); }} id="guardar-btn">{'mes >>'} <span>{SumarMes}</span></button>
+        <button onClick={() => { setCount((count) => count + SumarMes); handleClick(); }} id="guardar-btn">{'Mes >>'}</button>
 
-        <button onClick={() => { setCount((count) => count + 1); handleClick(); }} id="guardar-btn">{'día >'} <span>{count}</span></button>
+        <button onClick={() => { setCount((count) => count + 1); handleClick(); }} id="guardar-btn">{'Día >'} </button>
       </div>
      <table>
         <thead>
@@ -412,8 +418,8 @@ console.error(error);
 
       {/* ----------------------   PopUp    ------------------------------------*/}
       {popupInfo && (
-          <div className="popup-overlay">
-          <div className="popup">
+          <div  className={`popup-overlay ${tema ? 'temaPrueba' : 'temaClaro'}`}>
+          <div className={`popup ${tema ? 'temaPrueba' : 'temaClaro'}`}>
           <div className='encabezado-popup'>  
             <div className='titulo-popUp'><h3>Detalles de Registros</h3> </div>
             <div className='comandos-popUp'> 
@@ -560,5 +566,5 @@ console.error(error);
 TablaRegistros.propTypes = {
   setEditingId: PropTypes.func.isRequired,
   fechaCelda: PropTypes.string.isRequired,
-  nombre: PropTypes.string.isRequired
+  nombre: PropTypes.string.isRequired,
 };

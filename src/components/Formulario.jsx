@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { useFirebase } from '../context/FirebaseContext';
 import { addDoc, collection, doc, updateDoc, getDoc } from 'firebase/firestore';
 import { Timestamp } from 'firebase/firestore';
+import { useTheme } from '../context/ThemeContext';
 
 export default function Formulario({ editingId, /* setEditingId , */ initialData, onCancel, onSuccess, nombre, fechaOperacion }) {
   const { db } = useFirebase();
@@ -14,6 +15,8 @@ export default function Formulario({ editingId, /* setEditingId , */ initialData
     edad: '',
     fechaOperacion: fechaOperacion  // Usar la fecha pasada como prop
   });
+  const { tema } = useTheme();
+  console.log('Tema en MiComponente:', tema);
 
   useEffect(() => {
     const cargarDatos = async () => {
@@ -68,7 +71,7 @@ export default function Formulario({ editingId, /* setEditingId , */ initialData
     if (onCancel) onCancel();
   };    
   return (
-  <form onSubmit={handleSubmit} onReset={handleReset} className="formulario">
+  <form   onSubmit={handleSubmit} onReset={handleReset} className=' formulario' >
     <label htmlFor="nombre">Nombre:</label>
     <input type="text" id="nombre" name="nombre" placeholder="Nombre y Apellido" value={formData.nombre } 
     onChange={handleChange}  required/>
@@ -87,8 +90,10 @@ export default function Formulario({ editingId, /* setEditingId , */ initialData
     <label htmlFor="fechaOperacion">Fecha OP:</label>
     <input  type="date"  id="fechaOperacion"  name="fechaOperacion"  placeholder='dd/mm/aaaa'  value={formData.fechaOperacion }
     onChange={handleChange}  required/>
-    <button id="guardar-btn" type="submit">Guardar</button>
-    <button id="guardar-btn" type="reset" >Cancelar</button>
+    <div className='comandos-form'>
+    <button id="guardar-btn"  type="submit">Guardar</button>
+    <button id="guardar-btn"  type="reset" >Cancelar</button>
+    </div>
   </form>);}
 Formulario.propTypes = {
   editingId: PropTypes.string,

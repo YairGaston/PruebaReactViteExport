@@ -2,10 +2,14 @@ import { useEffect, useState } from 'react';
 import { useFirebase } from '../context/FirebaseContext';
 import { signInWithPopup, signOut } from 'firebase/auth';
 import Avatar from '@mui/material/Avatar';
-
-export default function Auth() {
+import { useTheme } from '../context/ThemeContext';
+export default function Auth( ) {
   const { auth, provider } = useFirebase();
   const [user, setUser] = useState(null);
+  const { tema, toggleTema } = useTheme();
+
+  
+  console.log('Tema en MiComponente:', tema);
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(user => {
@@ -38,7 +42,10 @@ export default function Auth() {
         <span >{user.displayName || user.email }</span>
         <Avatar src={user.providerData[0].photoURL} alt='photo perfil' />
         </div>
+        <div className="usuario-foto">
         <button id='logout-btn'onClick={handleLogout}>Cerrar sesión</button>
+        <button onClick={ toggleTema } className="btn-tema ">{tema ? '🌙': '☀️'} </button>
+        </div>
       </div>
     );
   }
