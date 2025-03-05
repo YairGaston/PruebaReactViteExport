@@ -35,7 +35,6 @@ export default function TablaRegistros({ setEditingId }) {
   if (!tema && typeof tema !== 'boolean') {
     console.log('Tema no está definido:', tema);
   }
-  console.log('Tema en MiComponente:', tema);
 useEffect(() => {
 if (!auth.currentUser) {
   setLoading(false);
@@ -205,7 +204,6 @@ console.error(error);
         fontSize: 9
       }
     });
-   
     doc.save('registros.pdf');
   };
 
@@ -254,7 +252,6 @@ console.error(error);
     return 0;
   }
   );
-  console.log(tema);
   return (
     <div className={tema ? 'temaPrueba registros-table' : 'temaClaro registros-table'}>
       <h2 className={tema ? 'temaPrueba' : 'temaClaro'}>Registros almacenados {QtyRegistros}</h2>
@@ -362,12 +359,21 @@ console.error(error);
               );
               /* ----------------   Obtener los registros para el día y nombre  -------------------- */
               const registrosDelNombreDia = registrosDelNombre.filter(registro => registro.fechaRegistro.toDate().toLocaleDateString('es-AR') === fechaCelda);
+     /*          let claseCombinada;
+              if (tieneRegistro === true && tema ? 'tiene-registro-Claro' : 'tiene-registro-Oscuro') {
+                claseCombinada = 'tiene-registro-Claro';
+              } else {  claseCombinada = 'tiene-registro-Oscuro';}
+              if (tieneRegistro === false && tema ? 'no-tiene-registro-Claro' : 'no-tiene-registro-Oscuro') {
+                claseCombinada = 'no-tiene-registro-Claro'; 
+              } else { claseCombinada = 'no-tiene-registro-Oscuro';} */
               
-
+              
+              const classNameClaro = `${tieneRegistro && tema ? 'tiene-registro-Claro' : tieneRegistro === false && tema ? 'no-tiene-registro-Claro' : tieneRegistro && tema === false? 'tiene-registro-Oscuro' : 'no-tiene-registro-Oscuro'}`;
               return ( // ------------------  Rellena la fila activando los botones si es que tiene registros ese día -------
                 <td key={index}>
-                  <button 
-                    className={tieneRegistro ? 'tiene-registro' : 'no-tiene-registro'}
+                  <button
+                  
+                    className={classNameClaro}
                     title={tieneRegistro ? `Hay ${registrosDelNombreDia.length} registro en esta fecha` : ''}
                     onClick={() => {
                       if (tieneRegistro) {
@@ -397,7 +403,7 @@ console.error(error);
                       } 
                       
                       }}>
-                    {tieneRegistro ? '✓' : ''}
+                    {tieneRegistro ? `${registrosDelNombreDia.length} ` : ''}
                   </button>
                 </td>
               );
@@ -418,7 +424,9 @@ console.error(error);
 
       {/* ----------------------   PopUp    ------------------------------------*/}
       {popupInfo && (
-          <div  className={`popup-overlay ${tema ? 'temaPrueba' : 'temaClaro'}`}>
+        <div className='PopUp-Visible'>
+          <div onClick={() => {setPopupInfo(null); setShowForm(false);setEditingRecord(null);setShowFormNuevo(false);}} className='popup-overlay'>
+          </div>
           <div className={`popup ${tema ? 'temaPrueba' : 'temaClaro'}`}>
           <div className='encabezado-popup'>  
             <div className='titulo-popUp'><h3>Detalles de Registros</h3> </div>
@@ -558,6 +566,7 @@ console.error(error);
         </>
       )}
           </div>
+        
         </div>
 )}
     </div>

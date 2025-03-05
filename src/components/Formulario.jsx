@@ -92,7 +92,7 @@ export default function Formulario({ editingId, /* setEditingId , */ initialData
     onChange={handleChange}  required/>
     <div className='comandos-form'>
     <button id="guardar-btn"  type="submit">Guardar</button>
-    <button id="guardar-btn"  type="reset" >Cancelar</button>
+    <button id="guardar-btn"  type="reset">Cancelar</button>
     </div>
   </form>);}
 Formulario.propTypes = {

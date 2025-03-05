@@ -4,9 +4,11 @@
   box-sizing: border-box;
   text-decoration: none;
   font-family: Arial, Helvetica, sans-serif;
+
 }
 .app-container{
   height: 100vh;
+  
 }
 :root{
   /* color: #36363a; */
@@ -14,14 +16,25 @@
   --TemaOscuroBody:#1E1E1E;
   --TemaOscuroTexto:#FFFFFF;
   --TemaClaroTexto:#1E1E1E;
+  --Boton-TemaOscuro: #69DEDE;
 }
 .temaClaro {
   background-color: var(--TemaOscuroBody);
   color: var(--TemaOscuroTexto);
+  transition: 0.15s ease 0.15s ;
+  -webkit-transition: 0.15s ease 0.15s ;
+  -moz-transition: 0.15s ease 0.15s ;
+  -ms-transition: 0.15s ease 0.15s ;
+  -o-transition: 0.15s ease 0.15s ;
 }
 .temaPrueba {
   background-color: var(--TemaClaroBody);
   color: var(--TemaClaroTexto);
+  transition: 0.15s ease 0.15s ;
+  -webkit-transition: 0.15s ease 0.15s ;
+  -moz-transition: 0.15s ease 0.15s ;
+  -ms-transition: 0.15s ease 0.15s ;
+  -o-transition: 0.15s ease 0.15s ;
 }
 body{
   background-color: var(--TemaOscuroBody);
@@ -85,11 +98,15 @@ h1{
 /* Formulario */
 .formulario{
   display: grid;
-  grid-template-columns: repeat(8, 1fr);
+  grid-template-columns:  repeat(8, 1fr);
   grid-template-rows: 50px repeat(1, 1fr);
   align-items: center;
   place-items: left;
   gap: 5px;
+
+}
+.formulario label{
+  text-align: right;
 }
 .comandos-form{
   grid-column-start: 8;
@@ -230,22 +247,41 @@ table {
   /* Datos */
 
   /* PopUp */
-  .popup-overlay { 
-    position: fixed; 
-    top: 0; 
-    left: 0; 
-    right: 0; 
-    bottom: 0; 
-    background-color: rgba(35, 33, 39, 0.8); 
-    display: flex; 
-    justify-content: center; 
-    align-items: center; 
-    z-index: 1000; 
+  .PopUp-Visible{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+
   }
+  
+  .popup-overlay {
+    position: absolute;
+    inset: 0px;
+    outline: 0;
+    background: rgba(15, 15, 15, 0.6);
+    transition: 0.1s ease 0.1s ;
+    -webkit-transition: 0.1s ease-in 0.1s ;
+    -moz-transition: 0.1s ease 0.1s ;
+    -ms-transition: 0.1s ease 0.1s ;
+    -o-transition: 0.1s ease 0.1s ;
+  
+/*     backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(1.5px);
+ */
+}
   .popup {
+    position: relative;
+    z-index: 2;
     display: flex;
     flex-direction: column;
-    align-items:center; 
+    align-items:center;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -255,6 +291,11 @@ table {
     -moz-border-radius: 8px;
     -ms-border-radius: 8px;
     -o-border-radius: 8px;
+    transform: translateZ(0px) scale(1);
+    transition-duration: 200ms;
+    transition-timing-function: ease;
+    transition-property: transform;
+    overflow: hidden;
 }
 .popup  table{
   margin-bottom: 10px;
@@ -278,8 +319,8 @@ table {
 .comandos-popUp {
   grid-column-start: 5;
   display: flex;
-  justify-content:space-between ;
-  align-items:center ;
+  align-content: center;
+  justify-content:space-between;
   gap: 15px;
 }
 .btn-cerrar-popup { 
@@ -312,25 +353,65 @@ table {
   -ms-border-radius: 50%;
   -o-border-radius: 50%;
 }
-
-  .no-tiene-registro {
+.tiene-registro-Claro {
+  background-color: hsla(180, 100%, 22%, 0.685);
+  color: var(--TemaOscuroTexto);
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: 0.15s ease 0.15s ;
+  -webkit-transition: 0.15s ease 0.15s ;
+  -moz-transition: 0.15s ease 0.15s ;
+  -ms-transition: 0.15s ease 0.15s ;
+  -o-transition: 0.15s ease 0.15s ;  
+}
+.tiene-registro-Oscuro {
+    background-color: var(--Boton-TemaOscuro);
+    color: var(--TemaClaroTexto);
     border-radius: 50%;
     width: 30px;
     height: 30px;
     align-items: center;
     justify-content: center;
-    text-align: center;
-
+    cursor: pointer;
+    transition: 0.15s ease 0.15s ;
+    -webkit-transition: 0.15s ease 0.15s ;
+    -moz-transition: 0.15s ease 0.15s ;
+    -ms-transition: 0.15s ease 0.15s ;
+    -o-transition: 0.15s ease 0.15s ;  
   }
-  .tiene-registro {
-    background-color: hsla(180, 100%, 22%, 0.685);
-    color: var(--TemaOscuroTexto);
-    border-radius: 50%;
-    width: 30px;
-    height: 30px;
-    align-items: center;
-    justify-content: center;
-  }
+            .no-tiene-registro-Claro {
+              border-radius: 50%;
+              width: 30px;
+              height: 30px;
+              align-items: center;
+              justify-content: center;
+              text-align: center;
+              cursor: pointer;
+              transition: 0.15s ease 0.15s ;
+              -webkit-transition: 0.15s ease 0.15s ;
+              -moz-transition: 0.15s ease 0.15s ;
+              -ms-transition: 0.15s ease 0.15s ;
+              -o-transition: 0.15s ease 0.15s ;
+            }
+              .no-tiene-registro-Oscuro {
+                background-color: rgba(252, 249, 249, 0.137);
+                border-radius: 50%;
+                width: 30px;
+                height: 30px;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+                cursor: pointer;
+                transition: 0.15s ease 0.15s ;
+                -webkit-transition: 0.15s ease 0.15s ;
+                -moz-transition: 0.15s ease 0.15s ;
+                -ms-transition: 0.15s ease 0.15s ;
+                -o-transition: 0.15s ease 0.15s ;
+              }
   .colNombre{
     text-transform:capitalize;
     width: 10em;
@@ -346,6 +427,7 @@ table {
   table td button {
     width: 100%;
     border: none;
+    
     border-radius: 2px;
     padding: 5px 10px;
     box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.25);

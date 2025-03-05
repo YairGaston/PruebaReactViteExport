@@ -7,10 +7,7 @@ export default function Auth( ) {
   const { auth, provider } = useFirebase();
   const [user, setUser] = useState(null);
   const { tema, toggleTema } = useTheme();
-
   
-  console.log('Tema en MiComponente:', tema);
-
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(user => {
         
