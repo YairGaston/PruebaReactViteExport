@@ -256,16 +256,16 @@ console.error(error);
     <div className={tema ? 'temaPrueba registros-table' : 'temaClaro registros-table'}>
       <h2 className={tema ? 'temaPrueba' : 'temaClaro'}>Registros almacenados {QtyRegistros}</h2>
       <div className="MovimientoDeTabla">
-        <button onClick={() => { setCount((count) => count - 1); handleClick(); }} id="guardar-btn"> {'< Día'} </button>
-        <button onClick={() => { setCount((count) => count - RestarMes); handleClick(); }} id="guardar-btn"> {'<< Mes'} </button>
+        <button onClick={() => { setCount((count) => count - 1); handleClick(); }} id="guardar-btn"> <i className="bi bi-caret-left-fill"></i> </button>
+        <button onClick={() => { setCount((count) => count - RestarMes); handleClick(); }} id="guardar-btn"> <i className="bi bi-caret-left-fill"></i><i className="bi bi-caret-left-fill"></i> </button>
 
         <div>
-          <button onClick={() => { setCount(0); handleClick(); }} id="guardar-btn">Hoy</button>
+          <button onClick={() => { setCount(0); handleClick(); }} id="guardar-btn"><i className="bi bi-calendar"></i></button>
         {/* <button onClick={handleSort} id="guardar-btn">{sortOrder === 'asc' ? 'Ascendente' : 'Descendente'}</button> */}
         </div>
-        <button onClick={() => { setCount((count) => count + SumarMes); handleClick(); }} id="guardar-btn">{'Mes >>'}</button>
+        <button onClick={() => { setCount((count) => count + SumarMes); handleClick(); }} id="guardar-btn"><i className="bi bi-caret-right-fill"></i><i className="bi bi-caret-right-fill"></i></button>
 
-        <button onClick={() => { setCount((count) => count + 1); handleClick(); }} id="guardar-btn">{'Día >'} </button>
+        <button onClick={() => { setCount((count) => count + 1); handleClick(); }} id="guardar-btn"><i className="bi bi-caret-right-fill"></i> </button>
       </div>
      <table>
         <thead>
@@ -348,7 +348,12 @@ console.error(error);
         const registrosDelNombre = registros.filter(registro => registro.nombre === nombre);
         return ( // -------------- Coloca los nombres unicos en la primera columna ----------------
           <tr key={nombre}>
-            <td><button className='colNombre'  >{nombre.toLowerCase()}</button></td>
+            <td><button 
+            className='colNombre'
+            title={`e-mail: ${registros.find(registros => registros.nombre === nombre).email}`}
+            >
+              {nombre.toLowerCase()}
+            </button></td>
             
             {Array(31).fill().map((_, index) => {
               // Calcular la fecha para esta celda
@@ -359,20 +364,11 @@ console.error(error);
               );
               /* ----------------   Obtener los registros para el día y nombre  -------------------- */
               const registrosDelNombreDia = registrosDelNombre.filter(registro => registro.fechaRegistro.toDate().toLocaleDateString('es-AR') === fechaCelda);
-     /*          let claseCombinada;
-              if (tieneRegistro === true && tema ? 'tiene-registro-Claro' : 'tiene-registro-Oscuro') {
-                claseCombinada = 'tiene-registro-Claro';
-              } else {  claseCombinada = 'tiene-registro-Oscuro';}
-              if (tieneRegistro === false && tema ? 'no-tiene-registro-Claro' : 'no-tiene-registro-Oscuro') {
-                claseCombinada = 'no-tiene-registro-Claro'; 
-              } else { claseCombinada = 'no-tiene-registro-Oscuro';} */
-              
               
               const classNameClaro = `${tieneRegistro && tema ? 'tiene-registro-Claro' : tieneRegistro === false && tema ? 'no-tiene-registro-Claro' : tieneRegistro && tema === false? 'tiene-registro-Oscuro' : 'no-tiene-registro-Oscuro'}`;
               return ( // ------------------  Rellena la fila activando los botones si es que tiene registros ese día -------
                 <td key={index}>
                   <button
-                  
                     className={classNameClaro}
                     title={tieneRegistro ? `Hay ${registrosDelNombreDia.length} registro en esta fecha` : ''}
                     onClick={() => {

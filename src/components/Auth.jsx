@@ -41,7 +41,7 @@ export default function Auth( ) {
         </div>
         <div className="usuario-foto">
         <button id='logout-btn'onClick={handleLogout}>Cerrar sesión</button>
-        <button onClick={ toggleTema } className="btn-tema ">{tema ? '🌙': '☀️'} </button>
+        <button onClick={ toggleTema } className={ tema ? "btn-tema-Claro" : "btn-tema-Oscuro"}>{tema ? '🌙': '☀️'} </button>
         </div>
       </div>
     );
