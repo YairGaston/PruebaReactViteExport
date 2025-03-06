@@ -145,10 +145,8 @@ console.error(error);
   return -1;
   }
   return 0;}
-  );
-    sortedRegistros
-    .map(registro => ({
-      id: registro.id,
+  ).map(registro => ({
+      Id: registro.id,
       Nombre: registro.nombre,
       Email: registro.email,
       Teléfono: registro.telefono,
@@ -180,6 +178,7 @@ console.error(error);
   );
   const doc = new jsPDF( { orientation: 'landscape',format: 'a4' });
   doc.setFontSize(12);
+  doc.setTextColor (50, 200, 180);
   doc.text(`Registros almacenados ${QtyRegistros}` , 20, 10 );
   doc.autoTable({
     head: [['id', 'Nombre', 'Email', 'Teléfono', 'Dirección', 'Edad', 'Fecha de registro', 'Hora de registro', 'Fecha OP']],
@@ -256,16 +255,16 @@ console.error(error);
     <div className={tema ? 'temaPrueba registros-table' : 'temaClaro registros-table'}>
       <h2 className={tema ? 'temaPrueba' : 'temaClaro'}>Registros almacenados {QtyRegistros}</h2>
       <div className="MovimientoDeTabla">
-        <button onClick={() => { setCount((count) => count - 1); handleClick(); }} id="guardar-btn"> <i className="bi bi-caret-left-fill"></i> </button>
-        <button onClick={() => { setCount((count) => count - RestarMes); handleClick(); }} id="guardar-btn"> <i className="bi bi-caret-left-fill"></i><i className="bi bi-caret-left-fill"></i> </button>
+        <button onClick={() => { setCount((count) => count - 1); handleClick(); }} id="guardar-btn" className={tema ? 'SombraTemaClaro':'SombraTemaOscuro'}> <i className="bi bi-caret-left-fill "></i> </button>
+        <button onClick={() => { setCount((count) => count - RestarMes); handleClick(); }} id="guardar-btn" className={tema ? 'SombraTemaClaro':'SombraTemaOscuro'}> <i className="bi bi-caret-left-fill"></i><i className="bi bi-caret-left-fill"></i> </button>
 
         <div>
-          <button onClick={() => { setCount(0); handleClick(); }} id="guardar-btn"><i className="bi bi-calendar"></i></button>
+          <button onClick={() => { setCount(0); handleClick(); }} id="guardar-btn" className={tema ? 'SombraTemaClaro':'SombraTemaOscuro'}><i className="bi bi-calendar"></i></button>
         {/* <button onClick={handleSort} id="guardar-btn">{sortOrder === 'asc' ? 'Ascendente' : 'Descendente'}</button> */}
         </div>
-        <button onClick={() => { setCount((count) => count + SumarMes); handleClick(); }} id="guardar-btn"><i className="bi bi-caret-right-fill"></i><i className="bi bi-caret-right-fill"></i></button>
+        <button onClick={() => { setCount((count) => count + SumarMes); handleClick(); }} id="guardar-btn" className={tema ? 'SombraTemaClaro':'SombraTemaOscuro'}><i className="bi bi-caret-right-fill"></i><i className="bi bi-caret-right-fill"></i></button>
 
-        <button onClick={() => { setCount((count) => count + 1); handleClick(); }} id="guardar-btn"><i className="bi bi-caret-right-fill"></i> </button>
+        <button onClick={() => { setCount((count) => count + 1); handleClick(); }} id="guardar-btn" className={tema ? 'SombraTemaClaro':'SombraTemaOscuro'}><i className="bi bi-caret-right-fill"></i> </button>
       </div>
      <table>
         <thead>
@@ -412,10 +411,10 @@ console.error(error);
       }
         </tbody>
       </table>
-      <br />
+      
       <div className="export-buttons">
-        <button onClick={exportToExcel} id="guardar-btn">Exportar a Excel</button>
-        <button onClick={exportToPDF} id="guardar-btn">Exportar a PDF</button>
+        <button onClick={exportToExcel} id="guardar-btn" className={tema ? 'SombraTemaClaro':'SombraTemaOscuro'}><i className="bi bi-filetype-xlsx"></i></button>
+        <button onClick={exportToPDF} id="guardar-btn" className={tema ? 'SombraTemaClaro':'SombraTemaOscuro'}><i className="bi bi-filetype-pdf"></i></button>
       </div>
 
       {/* ----------------------   PopUp    ------------------------------------*/}
@@ -427,8 +426,8 @@ console.error(error);
           <div className='encabezado-popup'>  
             <div className='titulo-popUp'><h3>Detalles de Registros</h3> </div>
             <div className='comandos-popUp'> 
-          <button id="guardar-btn" onClick={() =>{ { showFormNuevo ? setShowFormNuevo(false): setShowFormNuevo(true), setShowForm(false)}}}> {'+'} Agregar</button>
-          <button className='btn-cerrar-popup' onClick={() => {setPopupInfo(null); setShowForm(false);setEditingRecord(null);setShowFormNuevo(false);}}> {'✕'} Cerrar</button>
+          <button id="guardar-btn" className={tema ? 'SombraTemaClaro':'SombraTemaOscuro'} onClick={() =>{ { showFormNuevo ? setShowFormNuevo(false): setShowFormNuevo(true), setShowForm(false)}}}> {'+'} Agregar</button>
+          <button className={tema ? 'btn-cerrar-popup SombraTemaClaro':'btn-cerrar-popup SombraTemaOscuro'} onClick={() => {setPopupInfo(null); setShowForm(false);setEditingRecord(null);setShowFormNuevo(false);}}> {'✕'} Cerrar</button>
             </div>
           </div>
           <table>
