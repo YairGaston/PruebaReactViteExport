@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useFirebase } from '../context/FirebaseContext';
-import { addDoc, collection, doc, updateDoc, getDoc } from 'firebase/firestore';
+import { addDoc, collection, doc, updateDoc, getDoc, getDocs } from 'firebase/firestore';
 import { Timestamp } from 'firebase/firestore';
 import { useTheme } from '../context/ThemeContext';
 
 export default function Formulario({ editingId, /* setEditingId , */ initialData, onCancel, onSuccess, nombre, fechaOperacion }) {
   const { db } = useFirebase();
+  const [nombresUnicos, setNombresUnicos] = useState([]);
   const [formData, setFormData] = /* useState(initialData); */ useState({
     nombre: nombre, //  Usar el nombre pasado como prop
     email: '',
@@ -45,6 +46,15 @@ export default function Formulario({ editingId, /* setEditingId , */ initialData
       [name]: value
     }));
   };
+  useEffect(() => {
+    const cargarNombresUnicos = async () => {
+      const querySnapshot = await getDocs(collection(db, 'datosPersonales'));
+      const nombres = querySnapshot.docs.map(doc => doc.data().nombre);
+      const nombresUnicos = [...new Set(nombres)].filter(Boolean).sort();
+      setNombresUnicos(nombresUnicos);
+    };
+    cargarNombresUnicos();
+  }, [db]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -70,11 +80,28 @@ export default function Formulario({ editingId, /* setEditingId , */ initialData
     setFormData({ nombre: '', email: '', telefono: '', direccion: '', edad: '', fechaOperacion: '' });
     if (onCancel) onCancel();
   };    
+
   return (
   <form   onSubmit={handleSubmit} onReset={handleReset} className=' formulario' >
     <label htmlFor="nombre">Nombre:</label>
-    <input type="text" id="nombre" name="nombre" placeholder="Nombre y Apellido" value={formData.nombre } 
-    onChange={handleChange}  required/>
+    {/* <input type="text" id="nombre" name="nombre" placeholder="Nombre y Apellido" value={formData.nombre } 
+    onChange={handleChange}  required/> */}
+    <select 
+        id="nombre" 
+        name="nombre" 
+        value={formData.nombre} 
+        onChange={handleChange}
+        required
+      >
+        <option value="" disabled selected >Seleccione un nombre</option>
+        <option value="">Agregar</option>
+        {nombresUnicos.map((nombre, index) => (
+          <option key={index} value={nombre}>
+            {nombre}
+          </option>
+        ))}
+      </select>
+
     <label htmlFor="email">Email:</label>
     <input  type="email"  id="email"  name="email"  placeholder="nombre@gmail.com"  value={formData.email}  
     onChange={handleChange}  required/>
