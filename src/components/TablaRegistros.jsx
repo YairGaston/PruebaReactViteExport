@@ -162,7 +162,15 @@ console.error(error);
     XLSX.writeFile(workbook, 'registros.xlsx');
   };
 
-  let QtyRegistros = registros.length;
+  const fechasVisibles = new Set(
+    Array.from({ length: 31 }, (_, index) =>
+      addDay(new Date(), count - 15 + index).toLocaleDateString('es-AR')
+    )
+  );
+  const QtyRegistrosVisibles = registros.filter(registro =>
+    fechasVisibles.has(registro.fechaRegistro.toDate().toLocaleDateString('es-AR'))
+  ).length;
+  const QtyRegistros = registros.length;
   
   const exportToPDF = () => {
     const sortedRegistros = [...registros].sort((a, b) =>{
@@ -253,7 +261,7 @@ console.error(error);
   );
   return (
     <div className={tema ? 'temaPrueba registros-table' : 'temaClaro registros-table'}>
-      <h2 className={tema ? 'temaPrueba' : 'temaClaro'}>Registros almacenados {QtyRegistros}</h2>
+      <h2 className={tema ? 'temaPrueba' : 'temaClaro'}>Registros almacenados {QtyRegistrosVisibles}</h2>
       <div className="MovimientoDeTabla">
         <button onClick={() => { setCount((count) => count - 1); handleClick(); }} id="guardar-btn" className={tema ? 'SombraTemaClaro':'SombraTemaOscuro'}> <i className="bi bi-caret-left-fill "></i> </button>
         <button onClick={() => { setCount((count) => count - RestarMes); handleClick(); }} id="guardar-btn" className={tema ? 'SombraTemaClaro':'SombraTemaOscuro'}> <i className="bi bi-caret-left-fill"></i><i className="bi bi-caret-left-fill"></i> </button>
