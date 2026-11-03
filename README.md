@@ -1,8 +1,33 @@
-# React + Vite
+# Prueba React Vite
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Aplicación React construida con Vite y publicada en GitHub Pages.
 
-Currently, two official plugins are available:
+## Desarrollo local
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+```sh
+npm ci
+npm run dev
+```
+
+Para comprobar la versión de producción localmente:
+
+```sh
+npm run build
+npm run preview
+```
+
+## Publicación en GitHub Pages
+
+El workflow de GitHub Actions compila y publica automáticamente el sitio cuando
+se actualiza la rama `main`. También se puede iniciar manualmente desde la
+pestaña **Actions**.
+
+En el repositorio, configura **Settings → Pages → Build and deployment → Source**
+como **GitHub Actions**. La URL del sitio será
+`https://yairgaston.github.io/PruebaReactViteExport/`.
+
+La aplicación utiliza Firebase Authentication con el proveedor de Google. Para
+que el inicio de sesión funcione en el sitio publicado, agrega
+`yairgaston.github.io` en **Firebase Console → Authentication → Settings →
+Authorized domains**. El dominio local `localhost` debe mantenerse autorizado
+para el desarrollo.
