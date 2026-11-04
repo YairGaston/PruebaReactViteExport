@@ -19,6 +19,8 @@ export default function TablaRegistros({ setEditingId }) {
   const [error, setError] = useState(null);
   const [sortOrder, setSortOrder] = useState('asc'); // Estado para manejar el orden
   const [count, setCount] = useState(0); // Estado para manejar el contador de días que se debe mover el planning
+  const [filtroNombre, setFiltroNombre] = useState('');
+  const [filtroAnio, setFiltroAnio] = useState('');
   const [isVisible, setIsVisible] = useState(false);
   const [isVisible2, setIsVisible2] = useState(false);
   const [diasNombreMes1, setDiasNombreMes1] = useState(0);
@@ -167,10 +169,33 @@ console.error(error);
       addDay(new Date(), count - 15 + index).toLocaleDateString('es-AR')
     )
   );
-  const QtyRegistrosVisibles = registros.filter(registro =>
+  const aniosDisponibles = [...new Set(registros.map(registro =>
+    registro.fechaRegistro.toDate().getFullYear()
+  ))].sort((a, b) => b - a);
+  const nombresDisponibles = [...new Set(registros.map(registro => registro.nombre))]
+    .sort((a, b) => a.localeCompare(b, 'es'));
+  const registrosFiltrados = registros.filter(registro =>
+    (!filtroNombre || registro.nombre === filtroNombre) &&
+    (!filtroAnio || registro.fechaRegistro.toDate().getFullYear() === Number(filtroAnio))
+  );
+  const QtyRegistrosVisibles = registrosFiltrados.filter(registro =>
     fechasVisibles.has(registro.fechaRegistro.toDate().toLocaleDateString('es-AR'))
   ).length;
   const QtyRegistros = registros.length;
+  const fechaInicioVisible = addDay(new Date(), count - 15);
+  const fechaInicioVisibleISO = [
+    fechaInicioVisible.getFullYear(),
+    String(fechaInicioVisible.getMonth() + 1).padStart(2, '0'),
+    String(fechaInicioVisible.getDate()).padStart(2, '0'),
+  ].join('-');
+
+  const handleFechaInicioChange = (event) => {
+    const [year, month, day] = event.target.value.split('-').map(Number);
+    const fechaSeleccionada = new Date(year, month - 1, day);
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
+    setCount(diffDays(fechaSeleccionada, hoy) + 15);
+  };
   
   const exportToPDF = () => {
     const sortedRegistros = [...registros].sort((a, b) =>{
@@ -247,7 +272,7 @@ console.error(error);
     }
   }
 
-  const uniqueNames = [...new Set(registros.map(registro => registro.nombre))];
+  const uniqueNames = [...new Set(registrosFiltrados.map(registro => registro.nombre))];
        //--- ordenar lista ---
 
   const nombreOrden = uniqueNames.sort((a, b) => {
@@ -273,6 +298,34 @@ console.error(error);
         <button onClick={() => { setCount((count) => count + SumarMes); handleClick(); }} id="guardar-btn" className={tema ? 'SombraTemaClaro':'SombraTemaOscuro'}><i className="bi bi-caret-right-fill"></i><i className="bi bi-caret-right-fill"></i></button>
 
         <button onClick={() => { setCount((count) => count + 1); handleClick(); }} id="guardar-btn" className={tema ? 'SombraTemaClaro':'SombraTemaOscuro'}><i className="bi bi-caret-right-fill"></i> </button>
+      </div>
+      <div className="filtros-registros">
+        <label>
+          Fecha de inicio
+          <input
+            type="date"
+            value={fechaInicioVisibleISO}
+            onChange={handleFechaInicioChange}
+          />
+        </label>
+        <label>
+          Nombre
+          <select value={filtroNombre} onChange={(event) => setFiltroNombre(event.target.value)}>
+            <option value="">Todos los nombres</option>
+            {nombresDisponibles.map((nombre) => (
+              <option key={nombre} value={nombre}>{nombre}</option>
+            ))}
+          </select>
+        </label>
+        <label>
+          Año
+          <select value={filtroAnio} onChange={(event) => setFiltroAnio(event.target.value)}>
+            <option value="">Todos los años</option>
+            {aniosDisponibles.map((anio) => (
+              <option key={anio} value={anio}>{anio}</option>
+            ))}
+          </select>
+        </label>
       </div>
      <table>
         <thead>
@@ -352,7 +405,7 @@ console.error(error);
         <tbody>
         {uniqueNames.map((nombre) => {
         // Obtener todos los registros para este nombre
-        const registrosDelNombre = registros.filter(registro => registro.nombre === nombre);
+        const registrosDelNombre = registrosFiltrados.filter(registro => registro.nombre === nombre);
         return ( // -------------- Coloca los nombres unicos en la primera columna ----------------
           <tr key={nombre}>
             <td><button 

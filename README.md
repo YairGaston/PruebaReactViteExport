@@ -16,6 +16,12 @@ npm run build
 npm run preview
 ```
 
+## Consulta de registros
+
+En la tabla se puede elegir la fecha inicial del intervalo de 31 días y filtrar
+los resultados por nombre y año de registro. El contador refleja los registros
+que coinciden con esos filtros y con las fechas visibles.
+
 ## Publicación en GitHub Pages
 
 El workflow de GitHub Actions compila y publica automáticamente el sitio cuando

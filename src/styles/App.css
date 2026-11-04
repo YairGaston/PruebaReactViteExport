@@ -202,6 +202,29 @@ tbody tr{
   gap: 5px;
   margin: 0px 10px 0px 10px;
 }
+.filtros-registros{
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: end;
+  gap: 12px;
+  margin: 8px 0;
+}
+.filtros-registros label{
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.9rem;
+}
+.filtros-registros input,
+.filtros-registros select{
+  min-height: 36px;
+  padding: 6px 8px;
+  border: 1px solid currentColor;
+  border-radius: 4px;
+  background-color: inherit;
+  color: inherit;
+}
 table {
   justify-content: center;
   align-items: center;
