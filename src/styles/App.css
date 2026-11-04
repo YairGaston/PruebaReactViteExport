@@ -74,11 +74,17 @@ body{
 .user-info {
   display: flex;
   justify-content: space-between;
-  align-items:end ;
+  align-items: flex-start;
   padding-top: 10px;
   margin: 0px 10px 10px 10px;
-  align-items: center;
-  justify-items: center;
+  gap: 12px;
+}
+.perfil-filtros{
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
 }
 
 .bi.bi-calendar,
@@ -108,6 +114,69 @@ body{
   flex-direction: row-reverse;
   gap: 10px;
   justify-content: space-between;
+}
+.boton-filtros,
+.acciones-filtros button{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 36px;
+  padding: 7px 12px;
+  border: 1px solid currentColor;
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+.boton-filtros:hover,
+.acciones-filtros button:hover{
+  background-color: var(--Boton-TemaOscuro);
+}
+.menu-filtros-registros{
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: min(320px, calc(100vw - 32px));
+  padding: 16px;
+  border: 1px solid rgba(128, 128, 128, 0.45);
+  border-radius: 8px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+}
+.menu-filtros-registros label{
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-size: 0.9rem;
+}
+.menu-filtros-registros input,
+.menu-filtros-registros select{
+  width: 100%;
+  min-height: 38px;
+  margin: 0;
+  padding: 7px 9px;
+  border: 1px solid rgba(128, 128, 128, 0.65);
+  border-radius: 5px;
+  background-color: inherit;
+  color: inherit;
+  font-size: 0.95rem;
+}
+.menu-filtros-registros.temaPrueba select option{
+  background-color: var(--TemaClaroBody);
+  color: var(--TemaClaroTexto);
+}
+.menu-filtros-registros.temaClaro select option{
+  background-color: var(--TemaOscuroBody);
+  color: var(--TemaOscuroTexto);
+}
+.acciones-filtros{
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
 }
 .MuiAvatar-root {
   box-shadow: 0px 0px 8px var(--Boton-TemaOscuro) ;
@@ -201,29 +270,6 @@ tbody tr{
   align-content: center;
   gap: 5px;
   margin: 0px 10px 0px 10px;
-}
-.filtros-registros{
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: end;
-  gap: 12px;
-  margin: 8px 0;
-}
-.filtros-registros label{
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  font-size: 0.9rem;
-}
-.filtros-registros input,
-.filtros-registros select{
-  min-height: 36px;
-  padding: 6px 8px;
-  border: 1px solid currentColor;
-  border-radius: 4px;
-  background-color: inherit;
-  color: inherit;
 }
 table {
   justify-content: center;

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useFirebase } from '../context/FirebaseContext';
 import { collection, onSnapshot, deleteDoc, doc } from 'firebase/firestore';
@@ -12,15 +12,19 @@ import Formulario from './Formulario';
 import { useTheme } from '../context/ThemeContext';
 /* import { format } from "@formkit/tempo" */
 
-export default function TablaRegistros({ setEditingId }) {
+export default function TablaRegistros({
+  setEditingId,
+  count,
+  setCount,
+  filtroNombre,
+  filtroAnio,
+  setOpcionesFiltros,
+}) {
   const { db, auth } = useFirebase();
   const [registros, setRegistros] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [sortOrder, setSortOrder] = useState('asc'); // Estado para manejar el orden
-  const [count, setCount] = useState(0); // Estado para manejar el contador de días que se debe mover el planning
-  const [filtroNombre, setFiltroNombre] = useState('');
-  const [filtroAnio, setFiltroAnio] = useState('');
   const [isVisible, setIsVisible] = useState(false);
   const [isVisible2, setIsVisible2] = useState(false);
   const [diasNombreMes1, setDiasNombreMes1] = useState(0);
@@ -169,11 +173,14 @@ console.error(error);
       addDay(new Date(), count - 15 + index).toLocaleDateString('es-AR')
     )
   );
-  const aniosDisponibles = [...new Set(registros.map(registro =>
+  const aniosDisponibles = useMemo(() => [...new Set(registros.map(registro =>
     registro.fechaRegistro.toDate().getFullYear()
-  ))].sort((a, b) => b - a);
-  const nombresDisponibles = [...new Set(registros.map(registro => registro.nombre))]
-    .sort((a, b) => a.localeCompare(b, 'es'));
+  ))].sort((a, b) => b - a), [registros]);
+  const nombresDisponibles = useMemo(() => [...new Set(registros.map(registro => registro.nombre))]
+    .sort((a, b) => a.localeCompare(b, 'es')), [registros]);
+  useEffect(() => {
+    setOpcionesFiltros({ nombres: nombresDisponibles, anios: aniosDisponibles });
+  }, [nombresDisponibles, aniosDisponibles, setOpcionesFiltros]);
   const registrosFiltrados = registros.filter(registro =>
     (!filtroNombre || registro.nombre === filtroNombre) &&
     (!filtroAnio || registro.fechaRegistro.toDate().getFullYear() === Number(filtroAnio))
@@ -182,21 +189,6 @@ console.error(error);
     fechasVisibles.has(registro.fechaRegistro.toDate().toLocaleDateString('es-AR'))
   ).length;
   const QtyRegistros = registros.length;
-  const fechaInicioVisible = addDay(new Date(), count - 15);
-  const fechaInicioVisibleISO = [
-    fechaInicioVisible.getFullYear(),
-    String(fechaInicioVisible.getMonth() + 1).padStart(2, '0'),
-    String(fechaInicioVisible.getDate()).padStart(2, '0'),
-  ].join('-');
-
-  const handleFechaInicioChange = (event) => {
-    const [year, month, day] = event.target.value.split('-').map(Number);
-    const fechaSeleccionada = new Date(year, month - 1, day);
-    const hoy = new Date();
-    hoy.setHours(0, 0, 0, 0);
-    setCount(diffDays(fechaSeleccionada, hoy) + 15);
-  };
-  
   const exportToPDF = () => {
     const sortedRegistros = [...registros].sort((a, b) =>{
       const DatoA = a.nombre.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
@@ -298,34 +290,6 @@ console.error(error);
         <button onClick={() => { setCount((count) => count + SumarMes); handleClick(); }} id="guardar-btn" className={tema ? 'SombraTemaClaro':'SombraTemaOscuro'}><i className="bi bi-caret-right-fill"></i><i className="bi bi-caret-right-fill"></i></button>
 
         <button onClick={() => { setCount((count) => count + 1); handleClick(); }} id="guardar-btn" className={tema ? 'SombraTemaClaro':'SombraTemaOscuro'}><i className="bi bi-caret-right-fill"></i> </button>
-      </div>
-      <div className="filtros-registros">
-        <label>
-          Fecha de inicio
-          <input
-            type="date"
-            value={fechaInicioVisibleISO}
-            onChange={handleFechaInicioChange}
-          />
-        </label>
-        <label>
-          Nombre
-          <select value={filtroNombre} onChange={(event) => setFiltroNombre(event.target.value)}>
-            <option value="">Todos los nombres</option>
-            {nombresDisponibles.map((nombre) => (
-              <option key={nombre} value={nombre}>{nombre}</option>
-            ))}
-          </select>
-        </label>
-        <label>
-          Año
-          <select value={filtroAnio} onChange={(event) => setFiltroAnio(event.target.value)}>
-            <option value="">Todos los años</option>
-            {aniosDisponibles.map((anio) => (
-              <option key={anio} value={anio}>{anio}</option>
-            ))}
-          </select>
-        </label>
       </div>
      <table>
         <thead>
@@ -630,6 +594,9 @@ console.error(error);
 }
 TablaRegistros.propTypes = {
   setEditingId: PropTypes.func.isRequired,
-  fechaCelda: PropTypes.string.isRequired,
-  nombre: PropTypes.string.isRequired,
+  count: PropTypes.number.isRequired,
+  setCount: PropTypes.func.isRequired,
+  filtroNombre: PropTypes.string.isRequired,
+  filtroAnio: PropTypes.string.isRequired,
+  setOpcionesFiltros: PropTypes.func.isRequired,
 };

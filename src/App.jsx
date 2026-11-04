@@ -10,6 +10,10 @@ function AppContent() {
   const { auth } = useFirebase();
   const [, setEditingId] = useState(null);
   const [user, setUser] = useState(null);
+  const [count, setCount] = useState(0);
+  const [filtroNombre, setFiltroNombre] = useState('');
+  const [filtroAnio, setFiltroAnio] = useState('');
+  const [opcionesFiltros, setOpcionesFiltros] = useState({ nombres: [], anios: [] });
   const { tema } = useTheme();
   
   useEffect(() => {
@@ -21,12 +25,25 @@ function AppContent() {
 
   return ( 
     <div className={tema ? 'temaPrueba app-container' : 'temaClaro app-container'}>
-      <Auth />
+      <Auth
+        count={count}
+        setCount={setCount}
+        filtroNombre={filtroNombre}
+        setFiltroNombre={setFiltroNombre}
+        filtroAnio={filtroAnio}
+        setFiltroAnio={setFiltroAnio}
+        opcionesFiltros={opcionesFiltros}
+      />
       {user ? (
         <div className={`main-content ${tema ? 'temaPrueba' : 'temaClaro'}`}>
           <h1 className={tema ? 'temaPrueba' : 'temaClaro'}>Registro de Datos</h1>
           <TablaRegistros 
             setEditingId={setEditingId}
+            count={count}
+            setCount={setCount}
+            filtroNombre={filtroNombre}
+            filtroAnio={filtroAnio}
+            setOpcionesFiltros={setOpcionesFiltros}
           />
         </div>
       ) : (
