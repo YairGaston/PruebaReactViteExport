@@ -102,17 +102,16 @@ export default function Auth() {
               <button
                 type="button"
                 onClick={toggleTema}
-                className={`profile-theme-button ${tema ? 'SombraTemaClaro' : 'SombraTemaOscuro'}`}
+                className="profile-theme-button"
                 aria-label={`Tema ${themeMode === 'system' ? 'del dispositivo' : themeMode === 'light' ? 'claro' : 'oscuro'}. Cambiar tema`}
                 title={`Tema: ${themeMode === 'system' ? 'dispositivo' : themeMode === 'light' ? 'claro' : 'oscuro'}`}
               >
                 <span aria-hidden="true">{themeMode === 'system' ? '🖥️' : themeMode === 'light' ? '☀️' : '🌙'}</span>
-                <span>Tema {themeMode === 'system' ? 'del dispositivo' : themeMode === 'light' ? 'claro' : 'oscuro'}</span>
               </button>
               <button
                 id="logout-btn"
                 type="button"
-                className={tema ? 'SombraTemaClaro' : 'SombraTemaOscuro'}
+                className="profile-logout-button"
                 onClick={handleLogout}
               >
                 Cerrar sesión

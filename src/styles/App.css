@@ -111,11 +111,11 @@ body{
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
 }
 .profile-theme-button,
-.profile-menu-options #logout-btn {
+.profile-menu-options .profile-logout-button {
   display: flex;
   min-height: 36px;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center;
   gap: 8px;
   padding: 6px 10px;
   border: 0;
@@ -123,13 +123,15 @@ body{
   background: transparent;
   color: inherit;
   cursor: pointer;
-  text-align: left;
 }
-.profile-menu-options #logout-btn {
+.profile-theme-button {
+  width: 100%;
+}
+.profile-menu-options .profile-logout-button {
   width: 100%;
 }
 .profile-theme-button:hover,
-.profile-menu-options #logout-btn:hover {
+.profile-menu-options .profile-logout-button:hover {
   background-color: var(--Boton-TemaOscuro);
 }
 .perfil-filtros{
@@ -877,6 +879,12 @@ table {
 
   .usuario-foto > span {
     overflow-wrap: anywhere;
+  }
+
+  .profile-menu-options {
+    right: auto;
+    left: max(10px, calc(100vw - 200px));
+    width: min(190px, calc(100vw - 20px));
   }
 
   .popup {
