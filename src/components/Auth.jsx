@@ -105,7 +105,7 @@ export default function Auth() {
               onClick={toggleProfileMenu}
             >
               <Avatar
-                className={`${tema ? 'SombraTemaClaro':'SombraTemaOscuro'} ${!imageLoaded ? 'loading' : ''}`}
+                className={`profile-avatar ${tema ? 'profile-avatar-light' : 'profile-avatar-dark'} ${!imageLoaded ? 'loading' : ''}`}
                 src={imageLoaded ? user.providerData[0]?.photoURL : undefined}
                 alt=""
                 loading="lazy"

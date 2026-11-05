@@ -186,7 +186,13 @@ body{
   align-items: center;
   flex-direction: row;
   gap: 10px;
-  justify-content: space-between;
+  justify-content: flex-end;
+}
+.profile-avatar.MuiAvatar-root.profile-avatar-light {
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.22);
+}
+.profile-avatar.MuiAvatar-root.profile-avatar-dark {
+  box-shadow: 0 0 5px rgba(255, 255, 255, 0.24);
 }
 .boton-filtros,
 .acciones-filtros button{
@@ -821,7 +827,7 @@ table {
   .usuario-foto {
     flex: 1 1 auto;
     flex-direction: row;
-    justify-content: space-between;
+    justify-content: flex-end;
     gap: 8px;
   }
 
