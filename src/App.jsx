@@ -13,7 +13,6 @@ function AppContent() {
   const [count, setCount] = useState(0);
   const [filtroNombre, setFiltroNombre] = useState('');
   const [filtroAnio, setFiltroAnio] = useState('');
-  const [opcionesFiltros, setOpcionesFiltros] = useState({ nombres: [], anios: [] });
   const { tema } = useTheme();
   
   useEffect(() => {
@@ -25,15 +24,7 @@ function AppContent() {
 
   return ( 
     <div className={tema ? 'temaPrueba app-container' : 'temaClaro app-container'}>
-      <Auth
-        count={count}
-        setCount={setCount}
-        filtroNombre={filtroNombre}
-        setFiltroNombre={setFiltroNombre}
-        filtroAnio={filtroAnio}
-        setFiltroAnio={setFiltroAnio}
-        opcionesFiltros={opcionesFiltros}
-      />
+      <Auth />
       {user ? (
         <div className={`main-content ${tema ? 'temaPrueba' : 'temaClaro'}`}>
           <h1 className={tema ? 'temaPrueba' : 'temaClaro'}>Registro de Datos</h1>
@@ -42,8 +33,9 @@ function AppContent() {
             count={count}
             setCount={setCount}
             filtroNombre={filtroNombre}
+            setFiltroNombre={setFiltroNombre}
             filtroAnio={filtroAnio}
-            setOpcionesFiltros={setOpcionesFiltros}
+            setFiltroAnio={setFiltroAnio}
           />
         </div>
       ) : (

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useFirebase } from '../context/FirebaseContext';
 import { collection, onSnapshot, deleteDoc, doc } from 'firebase/firestore';
@@ -17,8 +17,9 @@ export default function TablaRegistros({
   count,
   setCount,
   filtroNombre,
+  setFiltroNombre,
   filtroAnio,
-  setOpcionesFiltros,
+  setFiltroAnio,
 }) {
   const { db, auth } = useFirebase();
   const [registros, setRegistros] = useState([]);
@@ -36,6 +37,11 @@ export default function TablaRegistros({
   const [showForm, setShowForm] = useState(false);
   const [editingRecord, setEditingRecord] = useState(null);
   const [showFormNuevo, setShowFormNuevo] = useState(false);
+  const [menuFiltrosAbierto, setMenuFiltrosAbierto] = useState(false);
+  const [fechaInicioBorrador, setFechaInicioBorrador] = useState('');
+  const [nombreBorrador, setNombreBorrador] = useState('');
+  const [anioBorrador, setAnioBorrador] = useState('');
+  const filtroMenuRef = useRef(null);
   const { tema, /* toggleTema */ } = useTheme();
   /* const [updatedRecord, setUpdatedRecord] = useState(null); */
   if (!tema && typeof tema !== 'boolean') {
@@ -67,6 +73,26 @@ setLoading(false);
 
 return () => unsubscribe();
 }, [db, auth]);
+
+useEffect(() => {
+  if (!menuFiltrosAbierto) return undefined;
+
+  const cerrarAlHacerClicFuera = (event) => {
+    if (!filtroMenuRef.current?.contains(event.target)) {
+      setMenuFiltrosAbierto(false);
+    }
+  };
+  const cerrarConEscape = (event) => {
+    if (event.key === 'Escape') setMenuFiltrosAbierto(false);
+  };
+
+  document.addEventListener('pointerdown', cerrarAlHacerClicFuera);
+  document.addEventListener('keydown', cerrarConEscape);
+  return () => {
+    document.removeEventListener('pointerdown', cerrarAlHacerClicFuera);
+    document.removeEventListener('keydown', cerrarConEscape);
+  };
+}, [menuFiltrosAbierto]);
 
 useEffect(() => {
 const DiaCentral = new Date();
@@ -178,9 +204,6 @@ console.error(error);
   ))].sort((a, b) => b - a), [registros]);
   const nombresDisponibles = useMemo(() => [...new Set(registros.map(registro => registro.nombre))]
     .sort((a, b) => a.localeCompare(b, 'es')), [registros]);
-  useEffect(() => {
-    setOpcionesFiltros({ nombres: nombresDisponibles, anios: aniosDisponibles });
-  }, [nombresDisponibles, aniosDisponibles, setOpcionesFiltros]);
   const registrosFiltrados = registros.filter(registro =>
     (!filtroNombre || registro.nombre === filtroNombre) &&
     (!filtroAnio || registro.fechaRegistro.toDate().getFullYear() === Number(filtroAnio))
@@ -189,6 +212,38 @@ console.error(error);
     fechasVisibles.has(registro.fechaRegistro.toDate().toLocaleDateString('es-AR'))
   ).length;
   const QtyRegistros = registros.length;
+  const abrirMenuFiltros = () => {
+    if (!menuFiltrosAbierto) {
+      const fecha = addDay(new Date(), count - 15);
+      setFechaInicioBorrador([
+        fecha.getFullYear(),
+        String(fecha.getMonth() + 1).padStart(2, '0'),
+        String(fecha.getDate()).padStart(2, '0'),
+      ].join('-'));
+      setNombreBorrador(filtroNombre);
+      setAnioBorrador(filtroAnio);
+    }
+    setMenuFiltrosAbierto((abierto) => !abierto);
+  };
+  const aplicarFiltros = (event) => {
+    event.preventDefault();
+    if (fechaInicioBorrador) {
+      const [year, month, day] = fechaInicioBorrador.split('-').map(Number);
+      const fechaSeleccionada = new Date(year, month - 1, day);
+      const hoy = new Date();
+      hoy.setHours(0, 0, 0, 0);
+      setCount(Math.round((fechaSeleccionada.getTime() - hoy.getTime()) / 86400000) + 15);
+    }
+    setFiltroNombre(nombreBorrador);
+    setFiltroAnio(anioBorrador);
+    setMenuFiltrosAbierto(false);
+  };
+  const limpiarFiltros = () => {
+    setCount(0);
+    setFiltroNombre('');
+    setFiltroAnio('');
+    setMenuFiltrosAbierto(false);
+  };
   const exportToPDF = () => {
     const sortedRegistros = [...registros].sort((a, b) =>{
       const DatoA = a.nombre.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
@@ -295,7 +350,68 @@ console.error(error);
      <table>
         <thead>
           <tr className="NombreMes">
-            <th rowSpan={3}><button onClick={handleSort}  className="TituloNombre">Nombre {sortOrder === 'asc' ? '↓' : '↑'}</button></th>
+            <th rowSpan={3} className="calendar-name-header">
+              <div className="calendar-name-controls">
+                <div className="calendar-filter-control" ref={filtroMenuRef}>
+                  <button
+                    type="button"
+                    className={`calendar-filter-button ${tema ? 'SombraTemaClaro' : 'SombraTemaOscuro'}`}
+                    aria-label="Abrir filtros"
+                    aria-expanded={menuFiltrosAbierto}
+                    aria-controls="menu-filtros-registros"
+                    title="Filtros"
+                    onClick={abrirMenuFiltros}
+                  >
+                    <i className="bi bi-funnel" aria-hidden="true"></i>
+                  </button>
+                  {menuFiltrosAbierto && (
+                    <form
+                      id="menu-filtros-registros"
+                      className={`menu-filtros-registros calendar-filter-menu ${tema ? 'temaPrueba' : 'temaClaro'}`}
+                      onSubmit={aplicarFiltros}
+                    >
+                      <label>
+                        Fecha de inicio
+                        <input
+                          type="date"
+                          value={fechaInicioBorrador}
+                          onChange={(event) => setFechaInicioBorrador(event.target.value)}
+                        />
+                      </label>
+                      <label>
+                        Nombre
+                        <select value={nombreBorrador} onChange={(event) => setNombreBorrador(event.target.value)}>
+                          <option value="">Todos los nombres</option>
+                          {nombresDisponibles.map((nombre) => (
+                            <option key={nombre} value={nombre}>{nombre}</option>
+                          ))}
+                        </select>
+                      </label>
+                      <label>
+                        Año
+                        <select value={anioBorrador} onChange={(event) => setAnioBorrador(event.target.value)}>
+                          <option value="">Todos los años</option>
+                          {aniosDisponibles.map((anio) => (
+                            <option key={anio} value={anio}>{anio}</option>
+                          ))}
+                        </select>
+                      </label>
+                      <div className="acciones-filtros">
+                        <button type="button" aria-label="Limpiar filtros" title="Limpiar filtros" onClick={limpiarFiltros}>
+                          <i className="bi bi-trash3" aria-hidden="true"></i>
+                        </button>
+                        <button type="submit" aria-label="Aplicar filtros" title="Aplicar filtros">
+                          <i className="bi bi-check-lg" aria-hidden="true"></i>
+                        </button>
+                      </div>
+                    </form>
+                  )}
+                </div>
+                <button onClick={handleSort} className="TituloNombre">
+                  Nombre {sortOrder === 'asc' ? '↓' : '↑'}
+                </button>
+              </div>
+            </th>
             <th colSpan={diasNombreMes1}><button id="btn-NombreMes">{addDay(new Date(), count - 15).toLocaleString('es-AR', { month: 'short' ,year:'2-digit' })} </button> </th>
             {isVisible2 &&<th colSpan={diasNombreMes2}><button id="btn-NombreMes">{addDay(monthEnd(addDay(new Date(), count - 15)), 1).toLocaleString('es-AR', { month: 'short' , year:'2-digit' })}</button></th>}
             {isVisible && <th colSpan={diasNombreMes3}><button id="btn-NombreMes">{addDay(monthEnd(addDay(monthEnd(addDay(new Date(), count - 15)), 1)), 1).toLocaleString('es-AR', { month: 'short', year:'2-digit'})}</button></th>}
@@ -601,6 +717,7 @@ TablaRegistros.propTypes = {
   count: PropTypes.number.isRequired,
   setCount: PropTypes.func.isRequired,
   filtroNombre: PropTypes.string.isRequired,
+  setFiltroNombre: PropTypes.func.isRequired,
   filtroAnio: PropTypes.string.isRequired,
-  setOpcionesFiltros: PropTypes.func.isRequired,
+  setFiltroAnio: PropTypes.func.isRequired,
 };
