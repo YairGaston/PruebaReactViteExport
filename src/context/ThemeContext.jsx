@@ -1,44 +1,41 @@
-import { createContext, useContext, useState, /* useEffect */ } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 
 const ThemeContext = createContext();
+const THEME_STORAGE_KEY = 'theme-mode';
 
 export function ThemeProvider({ children }) {
-  const [tema, setTema] = useState(true);
-
-  const toggleTema = () => {
-    setTema(prevTema => !prevTema);
-    console.log('Tema cambiado a:', !tema); // Para debugging
-  };
-
-  /*   // Inicializar el tema basado en la preferencia del sistema
-  const [tema, setTema] = useState(() => {
-    // Retorna true si el tema del sistema es claro
-    return window.matchMedia('(prefers-color-scheme: light)').matches;
+  const [themeMode, setThemeMode] = useState(() => {
+    const savedMode = window.localStorage.getItem(THEME_STORAGE_KEY);
+    return ['system', 'light', 'dark'].includes(savedMode) ? savedMode : 'system';
   });
+  const [systemPrefersLight, setSystemPrefersLight] = useState(
+    () => window.matchMedia('(prefers-color-scheme: light)').matches
+  );
 
   useEffect(() => {
-    // Escuchar cambios en el tema del sistema
     const mediaQuery = window.matchMedia('(prefers-color-scheme: light)');
-    
-    const handleChange = (e) => {
-      setTema(e.matches);
-    };
+    const handleChange = (event) => setSystemPrefersLight(event.matches);
 
+    setSystemPrefersLight(mediaQuery.matches);
     mediaQuery.addEventListener('change', handleChange);
-
-    // Limpieza del listener
     return () => mediaQuery.removeEventListener('change', handleChange);
   }, []);
 
+  useEffect(() => {
+    window.localStorage.setItem(THEME_STORAGE_KEY, themeMode);
+  }, [themeMode]);
+
+  const tema = themeMode === 'system' ? systemPrefersLight : themeMode === 'light';
   const toggleTema = () => {
-    setTema(prevTema => !prevTema);
-    console.log('Tema cambiado a:', !tema);
-  }; */
+    setThemeMode((currentMode) => (
+      currentMode === 'system' ? 'light' : currentMode === 'light' ? 'dark' : 'system'
+    ));
+  };
 
   const value = {
     tema,
-    setTema,
+    themeMode,
     toggleTema
   };
 

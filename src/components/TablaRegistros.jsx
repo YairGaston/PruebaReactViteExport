@@ -291,6 +291,7 @@ console.error(error);
 
         <button onClick={() => { setCount((count) => count + 1); handleClick(); }} id="guardar-btn" className={tema ? 'SombraTemaClaro':'SombraTemaOscuro'}><i className="bi bi-caret-right-fill"></i> </button>
       </div>
+     <div className="table-scroll calendar-scroll" role="region" aria-label="Registros por fecha" tabIndex={0}>
      <table>
         <thead>
           <tr className="NombreMes">
@@ -436,6 +437,7 @@ console.error(error);
       }
         </tbody>
       </table>
+      </div>
       
       <div className="export-buttons">
         <button onClick={exportToExcel} id="guardar-btn" className={tema ? 'SombraTemaClaro':'SombraTemaOscuro'}><i className="bi bi-filetype-xlsx"></i></button>
@@ -455,6 +457,7 @@ console.error(error);
           <button className={tema ? 'btn-cerrar-popup SombraTemaClaro':'btn-cerrar-popup SombraTemaOscuro'} onClick={() => {setPopupInfo(null); setShowForm(false);setEditingRecord(null);setShowFormNuevo(false);}}> {'✕'} Cerrar</button>
             </div>
           </div>
+          <div className="table-scroll popup-table-scroll" role="region" aria-label="Detalles de registros" tabIndex={0}>
           <table>
             <thead>
             <tr className="NombreMesPopUp">
@@ -496,6 +499,7 @@ console.error(error);
           ))}
             </tbody>
           </table>
+          </div>
           {!showForm ? ( /* -----  Aquí se decide si se abre el formmulario dentro del PopUp  --------- */
                     // ------  Acá tenfgo que poner el form para nuevo regis. si tiene registro abree el de editar y sino el otro. -------
             <> 

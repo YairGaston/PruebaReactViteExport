@@ -32,6 +32,10 @@ En el repositorio, configura **Settings → Pages → Build and deployment → S
 como **GitHub Actions**. La URL del sitio será
 `https://yairgaston.github.io/PruebaReactViteExport/`.
 
+La interfaz se adapta a pantallas móviles y de escritorio. El botón de tema
+cambia entre el modo del dispositivo (predeterminado), claro y oscuro; la
+preferencia elegida se conserva en ese navegador.
+
 La aplicación utiliza Firebase Authentication con el proveedor de Google. Para
 que el inicio de sesión funcione en el sitio publicado, agrega
 `yairgaston.github.io` en **Firebase Console → Authentication → Settings →

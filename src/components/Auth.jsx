@@ -4,6 +4,7 @@ import { useFirebase } from '../context/FirebaseContext';
 import { signInWithPopup, signOut } from 'firebase/auth';
 import Avatar from '@mui/material/Avatar';
 import { useTheme } from '../context/ThemeContext';
+import googleLogo from '../assets/google.svg';
 
 export default function Auth({
   count,
@@ -16,7 +17,7 @@ export default function Auth({
 }) {
   const { auth, provider } = useFirebase();
   const [user, setUser] = useState(null);
-  const { tema, toggleTema } = useTheme();
+  const { tema, themeMode, toggleTema } = useTheme();
   const [isLoading, setIsLoading] = useState(true);
   const [imageLoaded, setImageLoaded] = useState(false);
   const [menuFiltrosAbierto, setMenuFiltrosAbierto] = useState(false);
@@ -170,7 +171,15 @@ export default function Auth({
       </div>
       <div className="usuario-foto">
         <button id='logout-btn' className={tema ? 'SombraTemaClaro':'SombraTemaOscuro'} onClick={handleLogout}>Cerrar sesión</button>
-        <button onClick={ toggleTema } className={ tema ? "btn-tema-Claro" : "btn-tema-Oscuro"}>{tema ? '🌙': '☀️'} </button>
+        <button
+          type="button"
+          onClick={toggleTema}
+          className={tema ? "btn-tema-Claro" : "btn-tema-Oscuro"}
+          aria-label={`Tema ${themeMode === 'system' ? 'del dispositivo' : themeMode === 'light' ? 'claro' : 'oscuro'}. Cambiar tema`}
+          title={`Tema: ${themeMode === 'system' ? 'dispositivo' : themeMode === 'light' ? 'claro' : 'oscuro'}`}
+        >
+          {themeMode === 'system' ? '🖥️' : themeMode === 'light' ? '☀️' : '🌙'}
+        </button>
         </div>
       </div>
     );
@@ -180,7 +189,7 @@ export default function Auth({
     <div className="login-container">
         <h2>Iniciar Sesión</h2>
       <button onClick={handleGoogleLogin} className="google-btn">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/2048px-Google_%22G%22_logo.svg.png" alt="Google Logo"/>
+      <img src={googleLogo} alt="" aria-hidden="true" />
         Iniciar sesión con Google
       </button>
     </div>

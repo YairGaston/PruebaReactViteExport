@@ -185,7 +185,7 @@ body{
 /* Estilos previos... */
 h1{
   text-align: center;
-  color: var(--TemaOscuroTexto);
+  color: inherit;
 }
 /* Formulario */
 .formulario{
@@ -253,7 +253,7 @@ input{
 /* Tabla */
 h2{
   text-align: center;
-  color: var(--TemaOscuroTexto);
+  color: inherit;
 }
 tbody tr:hover {
   background-color: hsla(180, 100%, 39%, 0.164);
@@ -628,4 +628,151 @@ table {
 .loading {
   opacity: 0.7;
   transition: opacity 0.3s ease-in-out;
+}
+
+.app-container {
+  min-height: 100vh;
+  height: auto;
+  padding-bottom: 16px;
+}
+
+.main-content {
+  min-width: 0;
+  padding: 0 12px;
+}
+
+.google-btn {
+  min-height: 44px;
+  max-width: 100%;
+}
+
+.google-btn img {
+  flex: 0 0 20px;
+  object-fit: contain;
+}
+
+.table-scroll {
+  max-width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+.calendar-scroll table {
+  min-width: 1180px;
+}
+
+.popup {
+  width: min(1200px, 96vw);
+  max-width: 96vw;
+  max-height: 92vh;
+  overflow: auto;
+}
+
+.popup-table-scroll {
+  width: 100%;
+}
+
+.popup-table-scroll table {
+  min-width: 850px;
+}
+
+@media (max-width: 768px) {
+  .user-info {
+    align-items: center;
+    flex-wrap: wrap;
+    margin: 0 12px 12px;
+  }
+
+  .perfil-filtros {
+    flex: 1 1 100%;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .usuario-foto {
+    flex: 1 1 auto;
+    flex-direction: row;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+
+  .MovimientoDeTabla,
+  .export-buttons {
+    justify-content: center;
+    gap: 10px;
+    margin: 8px;
+    padding-left: 0;
+  }
+
+  .formulario {
+    grid-template-columns: minmax(100px, 0.8fr) minmax(0, 1.2fr);
+    grid-template-rows: auto;
+    gap: 8px;
+  }
+
+  .formulario label {
+    text-align: left;
+  }
+
+  .comandos-form {
+    grid-column: 1 / -1;
+    justify-content: flex-end;
+  }
+
+  .encabezado-popup {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 10px;
+    margin: 0 0 12px;
+  }
+
+  .titulo-popUp {
+    margin: 0;
+  }
+
+  .comandos-popUp {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .login-container {
+    width: 100%;
+    padding: 24px 16px;
+  }
+
+  .google-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 10px 12px;
+    font-size: 15px;
+  }
+
+  .usuario-foto > span {
+    overflow-wrap: anywhere;
+  }
+
+  .menu-filtros-registros {
+    position: fixed;
+    top: auto;
+    right: 16px;
+    left: 16px;
+    width: auto;
+  }
+
+  .popup {
+    width: calc(100vw - 20px);
+    max-width: none;
+    max-height: 94vh;
+    padding: 14px;
+  }
+
+  .acciones-filtros button {
+    padding: 7px 9px;
+  }
 }
