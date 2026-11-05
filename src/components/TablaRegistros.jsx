@@ -90,7 +90,7 @@ useEffect(() => {
     window.setTimeout(() => {
       suppressClickRef.current = false;
     }, 0);
-    setCount((currentCount) => currentCount + (desplazamientoX < 0 ? -1 : 1));
+    setCount((currentCount) => currentCount + (desplazamientoX < 0 ? 1 : -1));
   };
   const cancelarDeslizamiento = (event) => {
     if (swipeRef.current?.pointerId === event.pointerId) {
