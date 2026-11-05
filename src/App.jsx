@@ -27,7 +27,7 @@ function AppContent() {
       <Auth />
       {user ? (
         <div className={`main-content ${tema ? 'temaPrueba' : 'temaClaro'}`}>
-          <h1 className={tema ? 'temaPrueba' : 'temaClaro'}>Registro de Datos</h1>
+          <h1 className={tema ? 'temaPrueba' : 'temaClaro'}>Registro diario</h1>
           <TablaRegistros 
             setEditingId={setEditingId}
             count={count}

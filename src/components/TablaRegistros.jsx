@@ -167,7 +167,7 @@ console.error(error);
 };
 
   const exportToExcel = () => {
-    const sortedRegistros = [...registros].sort((a, b) =>{
+    const sortedRegistros = [...registrosVisibles].sort((a, b) =>{
       const DatoA = a.nombre.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
       const DatoB = b.nombre.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
   if (DatoA > DatoB){
@@ -188,7 +188,9 @@ console.error(error);
       "Hora de registro": registro.fechaRegistro.toDate().toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false }),
       FechaOP: registro.fechaOperacion,
     }));
-    const worksheet = XLSX.utils.json_to_sheet(sortedRegistros);
+    const worksheet = XLSX.utils.json_to_sheet(sortedRegistros, {
+      header: ['Id', 'Nombre', 'Email', 'Teléfono', 'Dirección', 'Edad', 'Fecha de registro', 'Hora de registro', 'FechaOP'],
+    });
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, 'RegistroGeneral');
     XLSX.writeFile(workbook, 'registros.xlsx');
@@ -208,10 +210,10 @@ console.error(error);
     (!filtroNombre || registro.nombre === filtroNombre) &&
     (!filtroAnio || registro.fechaRegistro.toDate().getFullYear() === Number(filtroAnio))
   );
-  const QtyRegistrosVisibles = registrosFiltrados.filter(registro =>
+  const registrosVisibles = registrosFiltrados.filter((registro) =>
     fechasVisibles.has(registro.fechaRegistro.toDate().toLocaleDateString('es-AR'))
-  ).length;
-  const QtyRegistros = registros.length;
+  );
+  const QtyRegistrosVisibles = registrosVisibles.length;
   const abrirMenuFiltros = () => {
     if (!menuFiltrosAbierto) {
       const fecha = addDay(new Date(), count - 15);
@@ -267,7 +269,7 @@ console.error(error);
     });
   };
   const exportToPDF = () => {
-    const sortedRegistros = [...registros].sort((a, b) =>{
+    const sortedRegistros = [...registrosVisibles].sort((a, b) =>{
       const DatoA = a.nombre.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
       const DatoB = b.nombre.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
   if (DatoA > DatoB){
@@ -281,7 +283,7 @@ console.error(error);
   const doc = new jsPDF( { orientation: 'landscape',format: 'a4' });
   doc.setFontSize(12);
   doc.setTextColor (50, 200, 180);
-  doc.text(`Registros almacenados ${QtyRegistros}` , 20, 10 );
+  doc.text(`Registros encontrados ${sortedRegistros.length}` , 20, 10 );
   doc.autoTable({
     head: [['id', 'Nombre', 'Email', 'Teléfono', 'Dirección', 'Edad', 'Fecha de registro', 'Hora de registro', 'Fecha OP']],
     body: sortedRegistros.map(registro => [
@@ -355,8 +357,9 @@ console.error(error);
   );
   return (
     <div className={tema ? 'temaPrueba registros-table' : 'temaClaro registros-table'}>
-      <h2 className={tema ? 'temaPrueba' : 'temaClaro'}>Registros almacenados {QtyRegistrosVisibles}</h2>
-      <div className="MovimientoDeTabla">
+      <h2 className={tema ? 'temaPrueba' : 'temaClaro'}>Registros encontrados {QtyRegistrosVisibles}</h2>
+      <div className="calendar-toolbar">
+      <div className="calendar-filter-actions">
         <div className="calendar-filter-control" ref={filtroMenuRef}>
           <button
             type="button"
@@ -412,6 +415,8 @@ console.error(error);
             </form>
           )}
         </div>
+      </div>
+      <div className="MovimientoDeTabla">
         <button onClick={() => { setCount((count) => count - 1); handleClick(); }} id="guardar-btn" className={tema ? 'SombraTemaClaro':'SombraTemaOscuro'}> <i className="bi bi-caret-left-fill "></i> </button>
         <button onClick={() => { setCount((count) => count - RestarMes); handleClick(); }} id="guardar-btn" className={tema ? 'SombraTemaClaro':'SombraTemaOscuro'}> <i className="bi bi-caret-left-fill"></i><i className="bi bi-caret-left-fill"></i> </button>
 
@@ -422,6 +427,7 @@ console.error(error);
         <button onClick={() => { setCount((count) => count + SumarMes); handleClick(); }} id="guardar-btn" className={tema ? 'SombraTemaClaro':'SombraTemaOscuro'}><i className="bi bi-caret-right-fill"></i><i className="bi bi-caret-right-fill"></i></button>
 
         <button onClick={() => { setCount((count) => count + 1); handleClick(); }} id="guardar-btn" className={tema ? 'SombraTemaClaro':'SombraTemaOscuro'}><i className="bi bi-caret-right-fill"></i> </button>
+      </div>
       </div>
      <div className="table-scroll calendar-scroll" role="region" aria-label="Registros por fecha" tabIndex={0}>
      <table>
