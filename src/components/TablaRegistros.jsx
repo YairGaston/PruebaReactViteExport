@@ -244,6 +244,28 @@ console.error(error);
     setFiltroAnio('');
     setMenuFiltrosAbierto(false);
   };
+  const actualizarRegistroEnPopup = (nuevoRegistro) => {
+    const existe = registros.some((registro) => registro.id === nuevoRegistro.id);
+    const registrosActualizados = existe
+      ? registros.map((registro) => registro.id === nuevoRegistro.id ? nuevoRegistro : registro)
+      : [...registros, nuevoRegistro];
+    const fechaRegistro = nuevoRegistro.fechaRegistro.toDate().toLocaleDateString('es-AR');
+    const registrosDelNombre = registrosActualizados.filter((registro) => (
+      registro.nombre === nuevoRegistro.nombre &&
+      registro.fechaRegistro.toDate().toLocaleDateString('es-AR') === fechaRegistro
+    ));
+
+    setRegistros(registrosActualizados);
+    setPopupInfo({
+      lista: registrosDelNombre,
+      qty: registrosDelNombre.length,
+      nombre: nuevoRegistro.nombre,
+      fecha: fechaRegistro,
+      email: nuevoRegistro.email,
+      telefono: nuevoRegistro.telefono,
+      direccion: nuevoRegistro.direccion,
+    });
+  };
   const exportToPDF = () => {
     const sortedRegistros = [...registros].sort((a, b) =>{
       const DatoA = a.nombre.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
@@ -563,7 +585,20 @@ console.error(error);
           <div className='encabezado-popup'>  
             <div className='titulo-popUp'><h3>Detalles de Registros</h3> </div>
             <div className='comandos-popUp'> 
-          <button id="guardar-btn" className={tema ? 'SombraTemaClaro':'SombraTemaOscuro'} onClick={() =>{ { showFormNuevo ? setShowFormNuevo(false): setShowFormNuevo(true), setShowForm(false)}}}> {'+'} Agregar</button>
+          {!showFormNuevo && !showForm && (
+            <button
+              id="guardar-btn"
+              className={tema ? 'SombraTemaClaro':'SombraTemaOscuro'}
+              aria-label="Agregar registro"
+              title="Agregar registro"
+              onClick={() => {
+                setShowFormNuevo(true);
+                setShowForm(false);
+              }}
+            >
+              <i className="bi bi-plus-lg" aria-hidden="true"></i>
+            </button>
+          )}
           <button className={tema ? 'btn-cerrar-popup SombraTemaClaro':'btn-cerrar-popup SombraTemaOscuro'} onClick={() => {setPopupInfo(null); setShowForm(false);setEditingRecord(null);setShowFormNuevo(false);}}> {'✕'} Cerrar</button>
             </div>
           </div>
@@ -594,15 +629,19 @@ console.error(error);
               <td>
                 <button 
                   className="editar-btn"
+                  aria-label="Editar registro"
+                  title="Editar registro"
                   onClick={() => {handleEditar(registro.id)/* , mostrarFormulario.classList.toggle("oculto") */}}
                 >
-                  Editar
+                  <i className="bi bi-pencil" aria-hidden="true"></i>
                 </button>
                 <button
                   className="eliminar-btn"
+                  aria-label="Eliminar registro"
+                  title="Eliminar registro"
                   onClick={() => handleEliminar(registro.id)}
                 >
-                  Eliminar
+                  <i className="bi bi-trash3" aria-hidden="true"></i>
                 </button>
               </td>
             </tr>
@@ -621,6 +660,10 @@ console.error(error);
               nombre={popupInfo.nombre}  // Pasar el nombre de la fila seleccionada
               fechaOperacion={popupInfo.fechaISO}  // Pasar la fecha de la celda            
             onCancel={() => {
+              setShowFormNuevo(false);
+              if (popupInfo.lista.length === 0) {
+                setPopupInfo(null);
+              }
             }}
             onSuccess={(nuevoRegistro) => {
               /* setShowFormNuevo(false);  */
@@ -628,27 +671,8 @@ console.error(error);
                 console.error('Datos del registro incompletos');
                 return;
               }
-              // Actualiza el estado `registros` con los nuevos datos
-              setRegistros((prevRegistros) => {
-                const updatedRegistros = prevRegistros.map((registro) => 
-                  registro.id === nuevoRegistro.id ? nuevoRegistro : registro
-                );
-              // --------   Actualiza el popupInfo con los registros actualizados
-              const fechaCelda2 = nuevoRegistro.fechaRegistro.toDate().toLocaleDateString('es-AR');
-              const registrosDelNombre2 = updatedRegistros.filter(registro => registro.nombre === nuevoRegistro.nombre);
-              const registrosDelNombreDia2 = registrosDelNombre2.filter(registro => registro.fechaRegistro.toDate().toLocaleDateString('es-AR') === fechaCelda2);
-              setPopupInfo({
-                lista:registrosDelNombreDia2,
-                qty: registrosDelNombreDia2.length,
-                nombre: nuevoRegistro.nombre,
-                fecha: fechaCelda2,
-                email: nuevoRegistro.email,
-                telefono: nuevoRegistro.telefono,
-                direccion: nuevoRegistro.direccion
-              });
-              return updatedRegistros;              
-            });
-            setShowFormNuevo(false);
+              actualizarRegistroEnPopup(nuevoRegistro);
+              setShowFormNuevo(false);
             }}
           />
           </> 
@@ -673,26 +697,7 @@ console.error(error);
                 console.error('Datos del registro incompletos');
                 return;
               }
-              // Actualiza el estado `registros` con los nuevos datos
-              setRegistros((prevRegistros) => {
-                const updatedRegistros = prevRegistros.map((registro) => 
-                  registro.id === nuevoRegistro.id ? nuevoRegistro : registro
-                );
-              // --------   Actualiza el popupInfo con los registros actualizados
-              const fechaCelda2 = nuevoRegistro.fechaRegistro.toDate().toLocaleDateString('es-AR')
-              const registrosDelNombre2 = updatedRegistros.filter(registro => registro.nombre === nuevoRegistro.nombre);
-              const registrosDelNombreDia2 = registrosDelNombre2.filter(registro => registro.fechaRegistro.toDate().toLocaleDateString('es-AR') === fechaCelda2);
-              setPopupInfo({
-                lista:registrosDelNombreDia2,
-                qty: registrosDelNombreDia2.length,
-                nombre: nuevoRegistro.nombre,
-                fecha: fechaCelda2,
-                email: nuevoRegistro.email,
-                telefono: nuevoRegistro.telefono,
-                direccion: nuevoRegistro.direccion
-              });
-              return updatedRegistros;              
-            });
+              actualizarRegistroEnPopup(nuevoRegistro);
               setShowForm(false);
               setEditingRecord(null);
             }}
