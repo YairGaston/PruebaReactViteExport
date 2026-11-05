@@ -122,6 +122,7 @@ export default function Auth() {
                 title={`Tema: ${themeMode === 'system' ? 'dispositivo' : themeMode === 'light' ? 'claro' : 'oscuro'}`}
               >
                 <i className={`bi ${themeMode === 'system' ? 'bi-display' : themeMode === 'light' ? 'bi-sun' : 'bi-moon'}`} aria-hidden="true"></i>
+                <span>{themeMode === 'system' ? 'Sistema' : themeMode === 'light' ? 'Claro' : 'Oscuro'}</span>
               </button>
               <button
                 id="logout-btn"
