@@ -768,6 +768,10 @@ table {
   min-width: 1180px;
 }
 
+.calendar-scroll tbody {
+  touch-action: pan-y;
+}
+
 .calendar-filter-control {
   position: relative;
   z-index: 3;

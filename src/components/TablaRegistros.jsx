@@ -42,6 +42,8 @@ export default function TablaRegistros({
   const [nombreBorrador, setNombreBorrador] = useState('');
   const [anioBorrador, setAnioBorrador] = useState('');
   const filtroMenuRef = useRef(null);
+  const swipeRef = useRef(null);
+  const suppressClickRef = useRef(false);
   const { tema, /* toggleTema */ } = useTheme();
   /* const [updatedRecord, setUpdatedRecord] = useState(null); */
   if (!tema && typeof tema !== 'boolean') {
@@ -73,6 +75,36 @@ setLoading(false);
 
 return () => unsubscribe();
 }, [db, auth]);
+
+useEffect(() => {
+  const finalizarDeslizamiento = (event) => {
+    const gesto = swipeRef.current;
+    if (!gesto || event.pointerId !== gesto.pointerId) return;
+
+    swipeRef.current = null;
+    const desplazamientoX = event.clientX - gesto.startX;
+    const desplazamientoY = event.clientY - gesto.startY;
+    if (Math.abs(desplazamientoX) < 50 || Math.abs(desplazamientoX) <= Math.abs(desplazamientoY)) return;
+
+    suppressClickRef.current = true;
+    window.setTimeout(() => {
+      suppressClickRef.current = false;
+    }, 0);
+    setCount((currentCount) => currentCount + (desplazamientoX < 0 ? -1 : 1));
+  };
+  const cancelarDeslizamiento = (event) => {
+    if (swipeRef.current?.pointerId === event.pointerId) {
+      swipeRef.current = null;
+    }
+  };
+
+  window.addEventListener('pointerup', finalizarDeslizamiento);
+  window.addEventListener('pointercancel', cancelarDeslizamiento);
+  return () => {
+    window.removeEventListener('pointerup', finalizarDeslizamiento);
+    window.removeEventListener('pointercancel', cancelarDeslizamiento);
+  };
+}, [setCount]);
 
 useEffect(() => {
   if (!menuFiltrosAbierto) return undefined;
@@ -505,7 +537,24 @@ console.error(error);
             <th><button id="btn-encabezado">{addDay(new Date(), count + 15).toLocaleString('es-AR', { day: '2-digit' })}</button></th>
           </tr>
         </thead>
-        <tbody>
+        <tbody
+          onPointerDown={(event) => {
+            if (event.isPrimary && event.button === 0) {
+              swipeRef.current = {
+                pointerId: event.pointerId,
+                startX: event.clientX,
+                startY: event.clientY,
+              };
+            }
+          }}
+          onClickCapture={(event) => {
+            if (suppressClickRef.current) {
+              event.preventDefault();
+              event.stopPropagation();
+              suppressClickRef.current = false;
+            }
+          }}
+        >
         {uniqueNames.map((nombre) => {
         // Obtener todos los registros para este nombre
         const registrosDelNombre = registrosFiltrados.filter(registro => registro.nombre === nombre);
