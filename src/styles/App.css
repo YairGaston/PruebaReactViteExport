@@ -81,6 +81,7 @@ body{
 }
 .profile-menu {
   position: relative;
+  flex: 1;
   z-index: 40;
 }
 .profile-menu-trigger {
@@ -101,8 +102,8 @@ body{
   left: 10px;
   z-index: 50;
   display: flex;
-  width: max-content;
-  min-width: 112px;
+  width: 150px;
+  max-width: calc(100vw - 20px);
   flex-direction: column;
   align-items: stretch;
   gap: 4px;
@@ -170,10 +171,11 @@ body{
 }
 
 .usuario-foto{
+  width: 100%;
   display: flex;
   align-content: center;
   align-items: center;
-  flex-direction: row-reverse;
+  flex-direction: row;
   gap: 10px;
   justify-content: space-between;
 }
@@ -809,8 +811,8 @@ table {
 
   .usuario-foto {
     flex: 1 1 auto;
-    flex-direction: row-reverse;
-    justify-content: flex-start;
+    flex-direction: row;
+    justify-content: space-between;
     gap: 8px;
   }
 

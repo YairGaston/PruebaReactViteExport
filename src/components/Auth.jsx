@@ -13,6 +13,7 @@ export default function Auth() {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const [profileMenuTop, setProfileMenuTop] = useState(0);
+  const [profileMenuLeft, setProfileMenuLeft] = useState(10);
   const profileMenuRef = useRef(null);
   const profileTriggerRef = useRef(null);
 
@@ -77,7 +78,14 @@ export default function Auth() {
   const toggleProfileMenu = () => {
     if (!profileMenuOpen) {
       const triggerBounds = profileTriggerRef.current?.getBoundingClientRect();
-      if (triggerBounds) setProfileMenuTop(triggerBounds.bottom + 8);
+      if (triggerBounds) {
+        const menuWidth = Math.min(150, window.innerWidth - 20);
+        setProfileMenuTop(triggerBounds.bottom + 8);
+        setProfileMenuLeft(Math.min(
+          Math.max(triggerBounds.left, 10),
+          window.innerWidth - menuWidth - 10
+        ));
+      }
     }
     setProfileMenuOpen((isOpen) => !isOpen);
   };
@@ -112,7 +120,7 @@ export default function Auth() {
             <div
               className={`profile-menu-options ${tema ? 'temaPrueba' : 'temaClaro'}`}
               id="profile-menu-options"
-              style={{ top: `${profileMenuTop}px` }}
+              style={{ top: `${profileMenuTop}px`, left: `${profileMenuLeft}px` }}
             >
               <button
                 type="button"
