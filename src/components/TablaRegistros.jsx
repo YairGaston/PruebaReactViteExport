@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useFirebase } from '../context/FirebaseContext';
 import { collection, onSnapshot, deleteDoc, doc } from 'firebase/firestore';
@@ -43,8 +43,19 @@ export default function TablaRegistros({
   const [anioBorrador, setAnioBorrador] = useState('');
   const filtroMenuRef = useRef(null);
   const swipeRef = useRef(null);
+  const touchSwipeRef = useRef(null);
   const suppressClickRef = useRef(false);
   const { tema, /* toggleTema */ } = useTheme();
+  const cambiarFechaPorDeslizamiento = useCallback((desplazamientoX, desplazamientoY) => {
+    if (Math.abs(desplazamientoX) < 50 || Math.abs(desplazamientoX) <= Math.abs(desplazamientoY)) return;
+
+    suppressClickRef.current = true;
+    window.setTimeout(() => {
+      suppressClickRef.current = false;
+    }, 500);
+    setCount((currentCount) => currentCount + (desplazamientoX < 0 ? 1 : -1));
+  }, [setCount]);
+
   /* const [updatedRecord, setUpdatedRecord] = useState(null); */
   if (!tema && typeof tema !== 'boolean') {
     console.log('Tema no está definido:', tema);
@@ -79,18 +90,10 @@ return () => unsubscribe();
 useEffect(() => {
   const finalizarDeslizamiento = (event) => {
     const gesto = swipeRef.current;
-    if (!gesto || event.pointerId !== gesto.pointerId) return;
+    if (!gesto || event.pointerId !== gesto.pointerId || event.pointerType === 'touch') return;
 
     swipeRef.current = null;
-    const desplazamientoX = event.clientX - gesto.startX;
-    const desplazamientoY = event.clientY - gesto.startY;
-    if (Math.abs(desplazamientoX) < 50 || Math.abs(desplazamientoX) <= Math.abs(desplazamientoY)) return;
-
-    suppressClickRef.current = true;
-    window.setTimeout(() => {
-      suppressClickRef.current = false;
-    }, 0);
-    setCount((currentCount) => currentCount + (desplazamientoX < 0 ? 1 : -1));
+    cambiarFechaPorDeslizamiento(event.clientX - gesto.startX, event.clientY - gesto.startY);
   };
   const cancelarDeslizamiento = (event) => {
     if (swipeRef.current?.pointerId === event.pointerId) {
@@ -104,7 +107,7 @@ useEffect(() => {
     window.removeEventListener('pointerup', finalizarDeslizamiento);
     window.removeEventListener('pointercancel', cancelarDeslizamiento);
   };
-}, [setCount]);
+}, [cambiarFechaPorDeslizamiento]);
 
 useEffect(() => {
   if (!menuFiltrosAbierto) return undefined;
@@ -539,13 +542,38 @@ console.error(error);
         </thead>
         <tbody
           onPointerDown={(event) => {
-            if (event.isPrimary && event.button === 0) {
+            if (event.isPrimary && event.pointerType !== 'touch' && event.button === 0) {
               swipeRef.current = {
                 pointerId: event.pointerId,
                 startX: event.clientX,
                 startY: event.clientY,
               };
             }
+          }}
+          onTouchStart={(event) => {
+            const touch = event.touches.length === 1 ? event.touches[0] : null;
+            if (touch) {
+              touchSwipeRef.current = {
+                identifier: touch.identifier,
+                startX: touch.clientX,
+                startY: touch.clientY,
+              };
+            } else {
+              touchSwipeRef.current = null;
+            }
+          }}
+          onTouchEnd={(event) => {
+            const start = touchSwipeRef.current;
+            const touch = Array.from(event.changedTouches).find(
+              (changedTouch) => changedTouch.identifier === start?.identifier
+            );
+            touchSwipeRef.current = null;
+            if (start && touch) {
+              cambiarFechaPorDeslizamiento(touch.clientX - start.startX, touch.clientY - start.startY);
+            }
+          }}
+          onTouchCancel={() => {
+            touchSwipeRef.current = null;
           }}
           onClickCapture={(event) => {
             if (suppressClickRef.current) {
