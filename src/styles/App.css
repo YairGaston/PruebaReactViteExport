@@ -96,39 +96,46 @@ body{
   outline-offset: 3px;
 }
 .profile-menu-options {
-  position: absolute;
-  top: calc(100% + 8px);
-  right: 0;
+  position: fixed;
+  top: 0;
+  left: 10px;
   z-index: 50;
   display: flex;
-  min-width: 190px;
+  width: max-content;
+  min-width: 112px;
   flex-direction: column;
   align-items: stretch;
-  gap: 8px;
-  padding: 10px;
+  gap: 4px;
+  padding: 5px;
   border: 1px solid rgba(128, 128, 128, 0.45);
-  border-radius: 8px;
+  border-radius: 7px;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
 }
 .profile-theme-button,
 .profile-menu-options .profile-logout-button {
   display: flex;
-  min-height: 36px;
+  min-height: 30px;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding: 6px 10px;
+  gap: 6px;
+  padding: 5px 8px;
   border: 0;
-  border-radius: 5px;
+  border-radius: 4px;
   background: transparent;
   color: inherit;
   cursor: pointer;
+  box-shadow: none;
+  font-size: 0.875rem;
 }
 .profile-theme-button {
-  width: 100%;
+  align-self: flex-start;
+  width: 32px;
+  min-width: 32px;
+  height: 30px;
 }
 .profile-menu-options .profile-logout-button {
-  width: 100%;
+  justify-content: flex-start;
+  white-space: nowrap;
 }
 .profile-theme-button:hover,
 .profile-menu-options .profile-logout-button:hover {
@@ -879,12 +886,6 @@ table {
 
   .usuario-foto > span {
     overflow-wrap: anywhere;
-  }
-
-  .profile-menu-options {
-    right: auto;
-    left: max(10px, calc(100vw - 200px));
-    width: min(190px, calc(100vw - 20px));
   }
 
   .popup {

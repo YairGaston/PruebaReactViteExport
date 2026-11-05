@@ -12,7 +12,9 @@ export default function Auth() {
   const [isLoading, setIsLoading] = useState(true);
   const [imageLoaded, setImageLoaded] = useState(false);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
+  const [profileMenuTop, setProfileMenuTop] = useState(0);
   const profileMenuRef = useRef(null);
+  const profileTriggerRef = useRef(null);
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(user => {
@@ -72,6 +74,14 @@ export default function Auth() {
     }
   };
 
+  const toggleProfileMenu = () => {
+    if (!profileMenuOpen) {
+      const triggerBounds = profileTriggerRef.current?.getBoundingClientRect();
+      if (triggerBounds) setProfileMenuTop(triggerBounds.bottom + 8);
+    }
+    setProfileMenuOpen((isOpen) => !isOpen);
+  };
+
   if (user) {
     return (
       <div className="user-info">
@@ -80,11 +90,12 @@ export default function Auth() {
             <span>{user.displayName || user.email}</span>
             <button
               type="button"
+              ref={profileTriggerRef}
               className="profile-menu-trigger"
               aria-label="Abrir menú de perfil"
               aria-expanded={profileMenuOpen}
               aria-controls="profile-menu-options"
-              onClick={() => setProfileMenuOpen((isOpen) => !isOpen)}
+              onClick={toggleProfileMenu}
             >
               <Avatar
                 className={`${tema ? 'SombraTemaClaro':'SombraTemaOscuro'} ${!imageLoaded ? 'loading' : ''}`}
@@ -98,7 +109,11 @@ export default function Auth() {
             </button>
           </div>
           {profileMenuOpen && (
-            <div className={`profile-menu-options ${tema ? 'temaPrueba' : 'temaClaro'}`} id="profile-menu-options">
+            <div
+              className={`profile-menu-options ${tema ? 'temaPrueba' : 'temaClaro'}`}
+              id="profile-menu-options"
+              style={{ top: `${profileMenuTop}px` }}
+            >
               <button
                 type="button"
                 onClick={toggleTema}
@@ -106,7 +121,7 @@ export default function Auth() {
                 aria-label={`Tema ${themeMode === 'system' ? 'del dispositivo' : themeMode === 'light' ? 'claro' : 'oscuro'}. Cambiar tema`}
                 title={`Tema: ${themeMode === 'system' ? 'dispositivo' : themeMode === 'light' ? 'claro' : 'oscuro'}`}
               >
-                <span aria-hidden="true">{themeMode === 'system' ? '🖥️' : themeMode === 'light' ? '☀️' : '🌙'}</span>
+                <i className={`bi ${themeMode === 'system' ? 'bi-display' : themeMode === 'light' ? 'bi-sun' : 'bi-moon'}`} aria-hidden="true"></i>
               </button>
               <button
                 id="logout-btn"
@@ -114,7 +129,8 @@ export default function Auth() {
                 className="profile-logout-button"
                 onClick={handleLogout}
               >
-                Cerrar sesión
+                <i className="bi bi-box-arrow-right" aria-hidden="true"></i>
+                <span>Cerrar sesión</span>
               </button>
             </div>
           )}
