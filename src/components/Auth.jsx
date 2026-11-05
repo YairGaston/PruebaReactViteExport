@@ -95,7 +95,6 @@ export default function Auth() {
       <div className="user-info">
         <div className="profile-menu" ref={profileMenuRef}>
           <div className="usuario-foto">
-            <span>{user.displayName || user.email}</span>
             <button
               type="button"
               ref={profileTriggerRef}
@@ -122,6 +121,9 @@ export default function Auth() {
               id="profile-menu-options"
               style={{ top: `${profileMenuTop}px`, left: `${profileMenuLeft}px` }}
             >
+              <span className="profile-menu-user" title={user.email || ''}>
+                {user.displayName || user.email}
+              </span>
               <button
                 type="button"
                 onClick={toggleTema}
