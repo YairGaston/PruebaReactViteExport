@@ -335,6 +335,61 @@ console.error(error);
     <div className={tema ? 'temaPrueba registros-table' : 'temaClaro registros-table'}>
       <h2 className={tema ? 'temaPrueba' : 'temaClaro'}>Registros almacenados {QtyRegistrosVisibles}</h2>
       <div className="MovimientoDeTabla">
+        <div className="calendar-filter-control" ref={filtroMenuRef}>
+          <button
+            type="button"
+            className={`calendar-filter-button ${tema ? 'SombraTemaClaro' : 'SombraTemaOscuro'}`}
+            aria-label="Abrir filtros"
+            aria-expanded={menuFiltrosAbierto}
+            aria-controls="menu-filtros-registros"
+            title="Filtros"
+            onClick={abrirMenuFiltros}
+          >
+            <i className="bi bi-funnel" aria-hidden="true"></i>
+          </button>
+          {menuFiltrosAbierto && (
+            <form
+              id="menu-filtros-registros"
+              className={`menu-filtros-registros calendar-filter-menu ${tema ? 'temaPrueba' : 'temaClaro'}`}
+              onSubmit={aplicarFiltros}
+            >
+              <label>
+                Fecha de inicio
+                <input
+                  type="date"
+                  value={fechaInicioBorrador}
+                  onChange={(event) => setFechaInicioBorrador(event.target.value)}
+                />
+              </label>
+              <label>
+                Nombre
+                <select value={nombreBorrador} onChange={(event) => setNombreBorrador(event.target.value)}>
+                  <option value="">Todos los nombres</option>
+                  {nombresDisponibles.map((nombre) => (
+                    <option key={nombre} value={nombre}>{nombre}</option>
+                  ))}
+                </select>
+              </label>
+              <label>
+                Año
+                <select value={anioBorrador} onChange={(event) => setAnioBorrador(event.target.value)}>
+                  <option value="">Todos los años</option>
+                  {aniosDisponibles.map((anio) => (
+                    <option key={anio} value={anio}>{anio}</option>
+                  ))}
+                </select>
+              </label>
+              <div className="acciones-filtros">
+                <button type="button" aria-label="Limpiar filtros" title="Limpiar filtros" onClick={limpiarFiltros}>
+                  <i className="bi bi-trash3" aria-hidden="true"></i>
+                </button>
+                <button type="submit" aria-label="Aplicar filtros" title="Aplicar filtros">
+                  <i className="bi bi-check-lg" aria-hidden="true"></i>
+                </button>
+              </div>
+            </form>
+          )}
+        </div>
         <button onClick={() => { setCount((count) => count - 1); handleClick(); }} id="guardar-btn" className={tema ? 'SombraTemaClaro':'SombraTemaOscuro'}> <i className="bi bi-caret-left-fill "></i> </button>
         <button onClick={() => { setCount((count) => count - RestarMes); handleClick(); }} id="guardar-btn" className={tema ? 'SombraTemaClaro':'SombraTemaOscuro'}> <i className="bi bi-caret-left-fill"></i><i className="bi bi-caret-left-fill"></i> </button>
 
@@ -350,68 +405,7 @@ console.error(error);
      <table>
         <thead>
           <tr className="NombreMes">
-            <th rowSpan={3} className="calendar-name-header">
-              <div className="calendar-name-controls">
-                <div className="calendar-filter-control" ref={filtroMenuRef}>
-                  <button
-                    type="button"
-                    className={`calendar-filter-button ${tema ? 'SombraTemaClaro' : 'SombraTemaOscuro'}`}
-                    aria-label="Abrir filtros"
-                    aria-expanded={menuFiltrosAbierto}
-                    aria-controls="menu-filtros-registros"
-                    title="Filtros"
-                    onClick={abrirMenuFiltros}
-                  >
-                    <i className="bi bi-funnel" aria-hidden="true"></i>
-                  </button>
-                  {menuFiltrosAbierto && (
-                    <form
-                      id="menu-filtros-registros"
-                      className={`menu-filtros-registros calendar-filter-menu ${tema ? 'temaPrueba' : 'temaClaro'}`}
-                      onSubmit={aplicarFiltros}
-                    >
-                      <label>
-                        Fecha de inicio
-                        <input
-                          type="date"
-                          value={fechaInicioBorrador}
-                          onChange={(event) => setFechaInicioBorrador(event.target.value)}
-                        />
-                      </label>
-                      <label>
-                        Nombre
-                        <select value={nombreBorrador} onChange={(event) => setNombreBorrador(event.target.value)}>
-                          <option value="">Todos los nombres</option>
-                          {nombresDisponibles.map((nombre) => (
-                            <option key={nombre} value={nombre}>{nombre}</option>
-                          ))}
-                        </select>
-                      </label>
-                      <label>
-                        Año
-                        <select value={anioBorrador} onChange={(event) => setAnioBorrador(event.target.value)}>
-                          <option value="">Todos los años</option>
-                          {aniosDisponibles.map((anio) => (
-                            <option key={anio} value={anio}>{anio}</option>
-                          ))}
-                        </select>
-                      </label>
-                      <div className="acciones-filtros">
-                        <button type="button" aria-label="Limpiar filtros" title="Limpiar filtros" onClick={limpiarFiltros}>
-                          <i className="bi bi-trash3" aria-hidden="true"></i>
-                        </button>
-                        <button type="submit" aria-label="Aplicar filtros" title="Aplicar filtros">
-                          <i className="bi bi-check-lg" aria-hidden="true"></i>
-                        </button>
-                      </div>
-                    </form>
-                  )}
-                </div>
-                <button onClick={handleSort} className="TituloNombre">
-                  Nombre {sortOrder === 'asc' ? '↓' : '↑'}
-                </button>
-              </div>
-            </th>
+            <th rowSpan={3}><button onClick={handleSort} className="TituloNombre">Nombre {sortOrder === 'asc' ? '↓' : '↑'}</button></th>
             <th colSpan={diasNombreMes1}><button id="btn-NombreMes">{addDay(new Date(), count - 15).toLocaleString('es-AR', { month: 'short' ,year:'2-digit' })} </button> </th>
             {isVisible2 &&<th colSpan={diasNombreMes2}><button id="btn-NombreMes">{addDay(monthEnd(addDay(new Date(), count - 15)), 1).toLocaleString('es-AR', { month: 'short' , year:'2-digit' })}</button></th>}
             {isVisible && <th colSpan={diasNombreMes3}><button id="btn-NombreMes">{addDay(monthEnd(addDay(monthEnd(addDay(new Date(), count - 15)), 1)), 1).toLocaleString('es-AR', { month: 'short', year:'2-digit'})}</button></th>}
